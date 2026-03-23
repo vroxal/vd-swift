@@ -7,6 +7,7 @@ The package currently provides:
 - Semantic color tokens with light and dark mode support
 - Typography tokens based on the Vroxal type scale
 - Shared spacing, radius, border-width, and icon-size constants
+- Reusable SwiftUI components (actions, forms, feedbacks, displays)
 - A small `onChangeCompat` helper for iOS 16 and iOS 17+
 
 ## Requirements
@@ -110,64 +111,111 @@ struct ProfileCard: View {
 
 ## Public API
 
-### Colors
+### Colors (Naming Structure)
 
-Use semantic color tokens from `Color` extensions. These resolve dynamically for light and dark appearance.
+Use semantic color tokens with this format:
+
+`Color.vd{AreaOfUse}{SemanticName}{ColorName}`
+
+- `AreaOfUse`: `Content`, `Background`, `Border`
+- `SemanticName`: `Default`, `Primary`, `Success`, `Error`, `Warning`, `Info`, `Neutral`, `Overlay` (background only)
+- `ColorName` (variant): `Base`, `Secondary`, `Tertiary`, `Disabled`, `OnBase`, `OnSecondary`, `OnTertiary`, `BaseHover`, `SecondaryHover`, `TertiaryHover`, `AlwaysLight`, `AlwaysDark`
+
+Not every combination exists for every semantic group. Use available tokens following the pattern above.
 
 Examples:
 
-- Content: `Color.vdContentDefaultBase`, `Color.vdContentDefaultSecondary`, `Color.vdContentPrimaryOnBase`
-- Background: `Color.vdBackgroundDefaultBase`, `Color.vdBackgroundPrimaryBase`, `Color.vdBackgroundOverlayBase`
-- Border: `Color.vdBorderDefaultBase`, `Color.vdBorderErrorSecondary`, `Color.vdBorderSuccessTertiary`
+```swift
+Text("Heading")
+    .foregroundStyle(Color.vdContentDefaultBase)
 
-The package also exposes brand and raw palette colors such as `Color.vdPrimary500` and `Color.vdBlueGlow500`, but semantic tokens should be the default choice for app UI.
+Text("Primary button")
+    .foregroundStyle(Color.vdContentPrimaryOnBase)
+    .padding(.horizontal, VdSpacing.md)
+    .padding(.vertical, VdSpacing.sm)
+    .background(Color.vdBackgroundPrimaryBase)
+
+RoundedRectangle(cornerRadius: VdRadius.lg)
+    .strokeBorder(Color.vdBorderDefaultSecondary, lineWidth: VdBorderWidth.sm)
+```
 
 ### Typography
 
-Typography is exposed through `VdFont`, `VdTextStyle`, `VdTracking`, and the `View.vdFont(_:)` modifier.
+Typography is exposed through `VdFont`, `VdTextStyle`, `VdTracking`, and `View.vdFont(_:)`.
 
-Available text styles:
+Initialize typography once at app startup:
 
-- Display: `displayLarge`, `displayMedium`, `displaySmall`
-- Headline: `headlineLarge`, `headlineMedium`, `headlineSmall`
-- Title: `titleLarge`, `titleMedium`, `titleSmall`
-- Label: `labelLarge`, `labelMedium`, `labelSmall`, `labelExtraSmall`
-- Body: `bodyExtraLarge`, `bodyLarge`, `bodyMedium`, `bodyMediumItalic`, `bodySmall`, `bodyExtraSmall`
+```swift
+@main
+struct MyApp: App {
+    init() {
+        VdFont.register()
+    }
 
-Example:
+    var body: some Scene {
+        WindowGroup { ContentView() }
+    }
+}
+```
+
+Use typography in views:
 
 ```swift
 Text("Section title")
     .vdFont(.titleLarge)
     .foregroundStyle(Color.vdContentDefaultBase)
+
+Text("Body copy")
+    .vdFont(.bodyMedium)
+    .foregroundStyle(Color.vdContentDefaultSecondary)
 ```
+
+| Variant            | Size | Line Height | Weight        | Tracking |
+| ------------------ | ---- | ----------- | ------------- | -------- |
+| `displayLarge`     | 60   | 72          | semibold      | -1.5     |
+| `displayMedium`    | 48   | 56          | semibold      | -1.0     |
+| `displaySmall`     | 40   | 48          | semibold      | -0.5     |
+| `headlineLarge`    | 34   | 40          | semibold      | -0.3     |
+| `headlineMedium`   | 28   | 36          | semibold      | -0.3     |
+| `headlineSmall`    | 24   | 32          | semibold      | -0.3     |
+| `titleLarge`       | 20   | 28          | semibold      | 0        |
+| `titleMedium`      | 16   | 24          | semibold      | 0        |
+| `titleSmall`       | 14   | 20          | semibold      | 0        |
+| `labelLarge`       | 16   | 24          | medium        | 0.2      |
+| `labelMedium`      | 14   | 24          | medium        | 0.2      |
+| `labelSmall`       | 12   | 16          | medium        | 0.2      |
+| `labelExtraSmall`  | 10   | 16          | medium        | 0.2      |
+| `bodyExtraLarge`   | 24   | 36          | regular       | 0        |
+| `bodyLarge`        | 16   | 24          | regular       | 0        |
+| `bodyMedium`       | 14   | 24          | regular       | 0        |
+| `bodyMediumItalic` | 14   | 24          | regularItalic | 0        |
+| `bodySmall`        | 12   | 16          | regular       | 0        |
+| `bodyExtraSmall`   | 10   | 16          | regular       | 0        |
 
 ### Scale
 
-Layout and sizing tokens are exposed as simple static constants:
+Layout and sizing use a shared scale system.
 
-- `VdSpacing`
-- `VdRadius`
-- `VdBorderWidth`
-- `VdIconSize`
+Scale steps (pt): `0, 1, 2, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96, 120`  
+Negative spacing steps (pt): `-2, -4, -8, -12, -16, -24`
 
-Example:
+- `VdSpacing`: padding, margin, and gaps
+- `VdRadius`: corner radius
+- `VdBorderWidth`: border/focus ring thickness
+- `VdIconSize`: icon sizing
 
-```swift
-Image(systemName: "star.fill")
-    .font(.system(size: VdIconSize.md))
-    .padding(VdSpacing.sm)
-```
-
-### Compatibility Helper
-
-`onChangeCompat(of:perform:)` is available on `View` to smooth over the API difference between iOS 16 and iOS 17:
+Usage:
 
 ```swift
-TextField("Name", text: $name)
-    .onChangeCompat(of: name) { value in
-        print(value)
-    }
+VStack(spacing: VdSpacing.md) {
+    Text("Card title").vdFont(.titleMedium)
+}
+.padding(VdSpacing.lg)
+.background(Color.vdBackgroundDefaultSecondary)
+.overlay(
+    RoundedRectangle(cornerRadius: VdRadius.lg)
+        .strokeBorder(Color.vdBorderDefaultSecondary, lineWidth: VdBorderWidth.sm)
+)
 ```
 
 ## Package Structure
@@ -176,6 +224,32 @@ TextField("Name", text: $name)
 vd-swift/
 ├── Package.swift
 ├── Sources/VroxalDesign/
+│   ├── Components/
+│   │   ├── Actions/
+│   │   │   ├── VdButton.swift
+│   │   │   └── VdIconButton.swift
+│   │   ├── Displays/
+│   │   │   ├── VdBadge.swift
+│   │   │   └── VdDivider.swift
+│   │   ├── Feedbacks/
+│   │   │   ├── VdAlerts.swift
+│   │   │   ├── VdEmptyState.swift
+│   │   │   ├── VdLoadingState.swift
+│   │   │   └── VdSnackbar.swift
+│   │   └── Forms/
+│   │       ├── VdCheckbox.swift
+│   │       ├── VdCodeInput.swift
+│   │       ├── VdDateTimeField.swift
+│   │       ├── VdRadioButton.swift
+│   │       ├── VdSelectField.swift
+│   │       ├── VdSelectionCard.swift
+│   │       ├── VdTextArea.swift
+│   │       └── VdTextField.swift
+│   ├── Resources/Fonts/
+│   │   ├── Poppins-Italic.ttf
+│   │   ├── Poppins-Medium.ttf
+│   │   ├── Poppins-Regular.ttf
+│   │   └── Poppins-SemiBold.ttf
 │   ├── VroxalDesign.swift
 │   └── Theme/
 │       ├── Colors.swift
@@ -186,7 +260,7 @@ vd-swift/
 
 ## Status
 
-The current package target contains design tokens and shared view helpers. Component implementations such as buttons, form controls, and feedback views are not part of this repository yet.
+The package currently includes design tokens, shared helpers, and reusable SwiftUI components.
 
 ## License
 
