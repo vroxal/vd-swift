@@ -1,4 +1,4 @@
-// Components/Feedback/VdLoadingState.swift — Vroxal Design System
+// Components/Feedback/VdLoadingState.swift — Vroxal Design
 // ─────────────────────────────────────────────────────────────
 // Figma source: node 539-11365
 //

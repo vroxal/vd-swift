@@ -1,4 +1,4 @@
-// Components/Forms/VdRadioButton.swift — Vroxal Design System
+// Components/Forms/VdRadioButton.swift — Vroxal Design
 // ─────────────────────────────────────────────────────────────
 // Figma source: node 279-6336
 //

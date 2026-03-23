@@ -1,4 +1,4 @@
-// Components/Actions/VdIconButton.swift — Vroxal Design System
+// Components/Actions/VdIconButton.swift — Vroxal Design
 // ─────────────────────────────────────────────────────────────
 // Figma source: node 90-5131
 //

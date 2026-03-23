@@ -1,4 +1,4 @@
-// Components/Alerts/VdAlert.swift — Vroxal Design System
+// Components/Alerts/VdAlert.swift — Vroxal Design
 // ─────────────────────────────────────────────────────────────
 
 import SwiftUI

@@ -4,7 +4,7 @@
 //
 //  Created by Pramod Paudel on 16/03/2026.
 //
-// Components/Buttons/VdButton.swift — Vroxal Design System
+// Components/Buttons/VdButton.swift — Vroxal Design
 
 import SwiftUI
 

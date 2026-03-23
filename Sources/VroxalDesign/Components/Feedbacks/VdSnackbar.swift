@@ -1,4 +1,4 @@
-// Components/Feedback/VdSnackbar.swift — Vroxal Design System
+// Components/Feedback/VdSnackbar.swift — Vroxal Design
 
 import SwiftUI
 

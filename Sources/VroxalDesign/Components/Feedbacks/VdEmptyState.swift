@@ -1,4 +1,4 @@
-// Components/Feedback/VdEmptyState.swift — Vroxal Design System
+// Components/Feedback/VdEmptyState.swift — Vroxal Design
 // ─────────────────────────────────────────────────────────────
 // Figma source: node 541-11772
 //

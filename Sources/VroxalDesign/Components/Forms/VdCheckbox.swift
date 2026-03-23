@@ -1,4 +1,4 @@
-// Components/Forms/VdCheckbox.swift — Vroxal Design System
+// Components/Forms/VdCheckbox.swift — Vroxal Design
 // ─────────────────────────────────────────────────────────────
 
 import SwiftUI

@@ -1,4 +1,4 @@
-// Components/Display/VdDivider.swift — Vroxal Design System
+// Components/Display/VdDivider.swift — Vroxal Design
 // ─────────────────────────────────────────────────────────────
 // Figma source: node Display/Divider
 //

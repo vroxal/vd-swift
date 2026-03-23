@@ -1,4 +1,4 @@
-// Components/Forms/VdDateTimeField.swift — Vroxal Design System
+// Components/Forms/VdDateTimeField.swift — Vroxal Design
 // ─────────────────────────────────────────────────────────────
 // A styled date/time input matching VdTextField visuals.
 // Uses the native compact DatePicker (.datePickerStyle(.compact))

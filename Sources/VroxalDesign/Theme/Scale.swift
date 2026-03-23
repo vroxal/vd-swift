@@ -1,4 +1,4 @@
-// Theme/Scale.swift — Vroxal Design System
+// Theme/Scale.swift — Vroxal Design
 // ─────────────────────────────────────────────────────────────
 // SOURCE OF TRUTH: root.json → Scale.*  +  brand.json → Scale.*
 //

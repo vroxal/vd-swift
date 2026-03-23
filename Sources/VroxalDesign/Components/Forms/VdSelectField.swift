@@ -1,4 +1,4 @@
-// Components/Forms/VdSelectField.swift — Vroxal Design System
+// Components/Forms/VdSelectField.swift — Vroxal Design
 
 import SwiftUI
 

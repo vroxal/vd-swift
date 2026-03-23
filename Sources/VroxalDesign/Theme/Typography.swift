@@ -1,4 +1,4 @@
-// Theme/Typography.swift — Vroxal Design System
+// Theme/Typography.swift — Vroxal Design
 
 import SwiftUI
 import UIKit

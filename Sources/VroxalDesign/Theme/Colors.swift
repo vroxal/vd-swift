@@ -1,4 +1,4 @@
-// Theme/Colors.swift — Vroxal Design System
+// Theme/Colors.swift — Vroxal Design
 // ─────────────────────────────────────────────────────────────
 // SOURCE OF TRUTH: root.json → brand.json → light.json / dark.json
 //

@@ -1,4 +1,4 @@
-// Components/Forms/VdSelectionCard.swift — Vroxal Design System
+// Components/Forms/VdSelectionCard.swift — Vroxal Design
 // ─────────────────────────────────────────────────────────────
 
 import SwiftUI
