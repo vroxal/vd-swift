@@ -1,4 +1,4 @@
-// Components/Forms/VdCodeInput.swift — Vroxal Design System
+// Components/Forms/VdCodeInput.swift — Vroxal Design
 // ─────────────────────────────────────────────────────────────
 // Figma source: node 318-36753
 //
