@@ -123,8 +123,12 @@ public struct VdLoadingState: View {
         VStack(spacing: VdSpacing.xl) {         // 24pt gap (scale/spacing/600)
 
             // ── Spinner ───────────────────────────────────────
-            VdSpinner(size: 40, color: .vdContentPrimaryBase)
-
+//            VdSpinner(size: 40, color: .vdContentPrimaryBase)
+            ProgressView()
+                .scaleEffect(1.5)
+                .progressViewStyle(.circular)
+                .tint(Color.vdContentPrimaryBase)
+        
             // ── Text block (only if title or description given) ──
             if title != nil || description != nil {
                 VStack(spacing: VdSpacing.xs) { // 4pt gap (scale/spacing/100)

@@ -322,6 +322,7 @@ private struct VdIconButtonPressStyle: ButtonStyle {
             .scaleEffect(isPressed ? 0.95 : 1.0)
             .animation(.easeInOut(duration: 0.12), value: isPressed)
     }
+}
 
 // ─────────────────────────────────────────────────────────────
 // MARK: — Preview
@@ -360,7 +361,7 @@ private struct VdIconButtonPressStyle: ButtonStyle {
                     VdIconButton(icon: "plus",    style: .solid,       rounded: true, action: {})
                     VdIconButton(icon: "trash",   style: .subtle,      rounded: true, action: {})
                     VdIconButton(icon: "pencil",  style: .outlined,    rounded: true, action: {})
-                    VdIconButton(icon: "ellipsis",color: .neutral, style: .transparent, rounded: true, action: {})
+                    VdIconButton(icon: "ellipsis.horizontal", color: .neutral, style: .transparent, rounded: true, action: {})
                 }
             }
 
