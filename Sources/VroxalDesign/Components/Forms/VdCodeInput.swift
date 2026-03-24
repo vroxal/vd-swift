@@ -98,6 +98,7 @@ public struct VdCodeInput: View {
             .onTapGesture { isFocused = true }
         }
         .disabled(state == .disabled)
+        .vdInstallKeyboardDismissOnTap()
         .onChangeCompat(of: code) { newValue in
             // Sanitise — digits only, trimmed to length
             let filtered = String(newValue.filter(\.isNumber).prefix(length))

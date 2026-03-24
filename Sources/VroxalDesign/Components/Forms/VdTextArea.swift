@@ -69,6 +69,7 @@ public struct VdTextArea: View {
             }
         }
         .disabled(state == .disabled)
+        .vdInstallKeyboardDismissOnTap()
     }
 
     // ─────────────────────────────────────────────────────────
