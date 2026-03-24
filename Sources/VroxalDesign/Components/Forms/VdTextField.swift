@@ -78,6 +78,7 @@ public struct VdTextField: View {
                 helperRow
             }
         }
+        .vdInstallKeyboardDismissOnTap()
     }
 
     // ─────────────────────────────────────────────────────────
