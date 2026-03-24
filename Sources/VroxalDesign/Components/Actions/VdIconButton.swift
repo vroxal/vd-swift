@@ -83,7 +83,7 @@ public enum VdIconButtonSize {
 
     var iconSize: CGFloat {
         switch self {
-        case .small:  return VdIconSize.xs   // 16pt
+        case .small:  return VdIconSize.md   // 16pt
         case .medium: return VdIconSize.md   // 24pt
         case .large:  return VdIconSize.lg   // 32pt
         }
@@ -161,8 +161,9 @@ public struct VdIconButton: View {
                         .scaleEffect(size == .small ? 0.7 : 1.0)
                 } else {
                     Image(systemName: icon)
-                        .font(.system(size: size.iconSize, weight: .medium))
-                        .foregroundStyle(Color.clear)  // placeholder — style fills it
+                        .resizable()
+                        .scaledToFit()
+                        .padding(2)
                         .frame(width: size.iconSize, height: size.iconSize)
                 }
             }
@@ -176,8 +177,7 @@ public struct VdIconButton: View {
                 borderColor: borderColor,
                 iconColor: { isPressed in resolvedIconColor(isPressed: isPressed) },
                 showBorder: style == .outlined,
-                isEnabled: isEnabled,
-                isLoading: isLoading
+                visualOpacity: visualOpacity
             )
         )
         .focused($isFocused)
@@ -191,6 +191,14 @@ public struct VdIconButton: View {
 
     private var cornerRadius: CGFloat {
         rounded ? size.dimension / 2 : VdRadius.sm     // full circle vs 8pt
+    }
+
+    private var visualOpacity: Double {
+        isVisuallyDisabled ? 0.4 : 1.0
+    }
+
+    private var isVisuallyDisabled: Bool {
+        !isEnabled || _backCompatDisabled || isLoading
     }
 
     // ─────────────────────────────────────────────────────────
@@ -302,8 +310,7 @@ private struct VdIconButtonPressStyle: ButtonStyle {
     let borderColor: Color
     let iconColor: (Bool) -> Color
     let showBorder: Bool
-    let isEnabled: Bool
-    let isLoading: Bool
+    let visualOpacity: Double
 
     func makeBody(configuration: Configuration) -> some View {
         let isPressed = configuration.isPressed
@@ -319,6 +326,7 @@ private struct VdIconButtonPressStyle: ButtonStyle {
                 }
             }
             .foregroundStyle(iconColor(isPressed))
+            .opacity(visualOpacity)
             .scaleEffect(isPressed ? 0.95 : 1.0)
             .animation(.easeInOut(duration: 0.12), value: isPressed)
     }
