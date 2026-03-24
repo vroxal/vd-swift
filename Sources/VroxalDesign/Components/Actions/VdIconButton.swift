@@ -198,7 +198,7 @@ public struct VdIconButton: View {
     }
 
     private var isVisuallyDisabled: Bool {
-        !isEnabled || _backCompatDisabled || isLoading
+        !isEnabled || _backCompatDisabled
     }
 
     // ─────────────────────────────────────────────────────────
@@ -318,11 +318,13 @@ private struct VdIconButtonPressStyle: ButtonStyle {
             .background(
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .fill(isPressed ? hoverBackgroundColor : backgroundColor)
+                    .opacity(visualOpacity)
             )
             .overlay {
                 if showBorder {
                     RoundedRectangle(cornerRadius: cornerRadius)
                         .strokeBorder(borderColor, lineWidth: VdBorderWidth.sm)
+                        .opacity(visualOpacity)
                 }
             }
             .foregroundStyle(iconColor(isPressed))
