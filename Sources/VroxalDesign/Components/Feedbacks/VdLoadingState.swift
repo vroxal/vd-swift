@@ -123,11 +123,8 @@ public struct VdLoadingState: View {
         VStack(spacing: VdSpacing.xl) {         // 24pt gap (scale/spacing/600)
 
             // ── Spinner ───────────────────────────────────────
-//            VdSpinner(size: 40, color: .vdContentPrimaryBase)
             ProgressView()
-                .scaleEffect(1.5)
                 .progressViewStyle(.circular)
-                .tint(Color.vdContentPrimaryBase)
         
             // ── Text block (only if title or description given) ──
             if title != nil || description != nil {
@@ -151,39 +148,6 @@ public struct VdLoadingState: View {
             }
         }
         .frame(maxWidth: .infinity)
-    }
-}
-
-// ─────────────────────────────────────────────────────────────
-// MARK: — VdSpinner
-// A standalone reusable spinning arc.
-// Also used internally by VdButton and VdIconButton.
-// ─────────────────────────────────────────────────────────────
-
-public struct VdSpinner: View {
-
-    private let size:  CGFloat
-    private let color: Color
-
-    @State private var isAnimating = false
-
-    public init(size: CGFloat = 24, color: Color = .vdContentPrimaryBase) {
-        self.size  = size
-        self.color = color
-    }
-
-    public var body: some View {
-        Circle()
-            .trim(from: 0, to: 0.75)
-            .stroke(color, style: StrokeStyle(lineWidth: size * 0.1, lineCap: .round))
-            .frame(width: size, height: size)
-            .rotationEffect(.degrees(isAnimating ? 360 : 0))
-            .animation(
-                .linear(duration: 0.9).repeatForever(autoreverses: false),
-                value: isAnimating
-            )
-            .onAppear { isAnimating = true }
-            .onDisappear { isAnimating = false }
     }
 }
 

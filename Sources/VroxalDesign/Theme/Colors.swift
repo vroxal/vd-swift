@@ -336,6 +336,12 @@ public extension Color {
         dark:  _vdPrimary400    
     )
 
+    /// Content/Primary/BaseInverted  · light: Primary.400 · dark: Primary.500
+    static let vdContentPrimaryBaseInverted = Color(
+        light: _vdPrimary400,
+        dark:  _vdPrimary500
+    )
+
     /// Content/Primary/Secondary  · light: Primary.600 · dark: Primary.300
     static let vdContentPrimarySecondary = Color(
         light: _vdPrimary600,   
