@@ -30,7 +30,7 @@ internal enum VdKeyboardDismissOnTapInstaller {
     }
 
     private final class TapHandler: NSObject {
-        @objc func handleTap(_ recognizer: UITapGestureRecognizer) {
+        @MainActor @objc func handleTap(_ recognizer: UITapGestureRecognizer) {
             recognizer.view?.endEditing(true)
         }
     }

@@ -158,6 +158,8 @@ public struct VdTextArea: View {
                     action: action
                 )
                 .padding(.top, VdSpacing.smMd)
+                .padding(.top, -VdSpacing.xs)
+                .padding(.trailing, -VdSpacing.xs)
             }
         }
         .padding(.horizontal, VdSpacing.smMd)                // ← mirrors TextField horizontal padding

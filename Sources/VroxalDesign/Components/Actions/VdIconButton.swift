@@ -165,7 +165,7 @@ public struct VdIconButton: View {
                         .scaledToFit()
                         .padding(2)
                         .frame(width: size.iconSize, height: size.iconSize)
-                }
+                        }
             }
             .frame(width: size.dimension, height: size.dimension)
         }
@@ -359,9 +359,9 @@ private struct VdIconButtonPressStyle: ButtonStyle {
             // ── Sizes ─────────────────────────────────────────
             previewSection("Sizes — Small / Medium / Large") {
                 HStack(spacing: VdSpacing.md) {
-                    VdIconButton(icon: "plus", size: .small,  action: {})
-                    VdIconButton(icon: "plus", size: .medium, action: {})
-                    VdIconButton(icon: "plus", size: .large,  action: {})
+                    VdIconButton(icon: "xmark", size: .small,  action: {})
+                    VdIconButton(icon: "ellipsis", size: .medium, action: {})
+                    VdIconButton(icon: "ellipsis", size: .large,  action: {})
                 }
             }
 
@@ -371,7 +371,7 @@ private struct VdIconButtonPressStyle: ButtonStyle {
                     VdIconButton(icon: "plus",    style: .solid,       rounded: true, action: {})
                     VdIconButton(icon: "trash",   style: .subtle,      rounded: true, action: {})
                     VdIconButton(icon: "pencil",  style: .outlined,    rounded: true, action: {})
-                    VdIconButton(icon: "ellipsis.horizontal", color: .neutral, style: .transparent, rounded: true, action: {})
+                    VdIconButton(icon: "ellipsis", color: .neutral, style: .transparent, rounded: true, action: {})
                 }
             }
 
