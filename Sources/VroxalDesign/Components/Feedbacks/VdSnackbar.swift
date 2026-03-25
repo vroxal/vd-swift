@@ -238,11 +238,13 @@ private enum VdSnackbarPresenter {
         configuration: VdSnackbarPresentationConfiguration
     ) {
         guard let scene = activeWindowScene() else { return }
+        let bottomInset = resolvedBottomInset(for: scene)
 
         if let entry = entries[id] {
             entry.window.windowScene = scene
             entry.window.isHidden = false
             entry.model.configuration = configuration
+            entry.model.bottomInset = bottomInset
             withAnimation(transition) {
                 entry.model.isVisible = true
             }
@@ -250,6 +252,7 @@ private enum VdSnackbarPresenter {
         }
 
         let model = VdSnackbarOverlayModel(configuration: configuration)
+        model.bottomInset = bottomInset
         let window = makeWindow(for: scene)
         let hostingController = UIHostingController(
             rootView: VdSnackbarOverlayView(model: model)
@@ -300,6 +303,44 @@ private enum VdSnackbarPresenter {
         window.windowLevel = .alert + 1
         return window
     }
+
+    private static func resolvedBottomInset(for scene: UIWindowScene) -> CGFloat {
+        guard let hostWindow = presentationHostWindow(for: scene) else {
+            return VdSpacing.xl
+        }
+
+        let safeAreaBottom = hostWindow.safeAreaInsets.bottom
+        let reservedBottom = max(safeAreaBottom, reservedBottomHeight(in: hostWindow))
+        return reservedBottom + VdSpacing.md
+    }
+
+    private static func presentationHostWindow(for scene: UIWindowScene) -> UIWindow? {
+        let visibleWindows = scene.windows.filter {
+            !$0.isHidden && $0.windowLevel == .normal
+        }
+
+        return visibleWindows.first(where: \.isKeyWindow)
+            ?? visibleWindows.first
+    }
+
+    private static func reservedBottomHeight(in window: UIWindow) -> CGFloat {
+        var maxHeight: CGFloat = 0
+
+        for view in window.allSubviews
+        where (view is UITabBar || view is UIToolbar)
+            && !view.isHidden
+            && view.alpha > 0.01
+            && view.bounds.height > 0.5
+        {
+            let frameInWindow = view.convert(view.bounds, to: window)
+            guard frameInWindow.maxY > window.bounds.maxY - 1 else { continue }
+
+            let overlap = max(0, window.bounds.maxY - frameInWindow.minY)
+            maxHeight = max(maxHeight, overlap)
+        }
+
+        return maxHeight
+    }
 }
 
 private final class VdPassThroughWindow: UIWindow {
@@ -313,6 +354,7 @@ private final class VdPassThroughWindow: UIWindow {
 private final class VdSnackbarOverlayModel: ObservableObject {
     @Published var configuration: VdSnackbarPresentationConfiguration
     @Published var isVisible = false
+    @Published var bottomInset: CGFloat = VdSpacing.xl
 
     init(configuration: VdSnackbarPresentationConfiguration) {
         self.configuration = configuration
@@ -341,13 +383,23 @@ private struct VdSnackbarOverlayView: View {
                     onClose: model.configuration.onClose
                 )
                 .padding(.horizontal, VdSpacing.lg)
-                .padding(.bottom, VdSpacing.xl)
+                .padding(.bottom, model.bottomInset)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    // Consume taps so they don't pass through to bottom bars.
+                }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
         .background(Color.clear)
         .ignoresSafeArea()
+    }
+}
+
+private extension UIView {
+    var allSubviews: [UIView] {
+        subviews + subviews.flatMap(\.allSubviews)
     }
 }
 
