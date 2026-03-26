@@ -101,12 +101,7 @@ public struct VdTextArea: View {
 
             // Leading icon — top-aligned
             if let icon = leadingIcon {
-                Image(systemName: icon)
-                    .resizable()
-                    .scaledToFit()
-                    .padding(2)
-                    .foregroundStyle(leadingIconColor)
-                    .frame(width: VdIconSize.md, height: VdIconSize.md)
+                VdIcon(icon, size: VdIconSize.md, color: leadingIconColor)
                     .padding(.top, VdSpacing.smMd)           // align with first text line
             }
 
@@ -191,12 +186,7 @@ public struct VdTextArea: View {
     @ViewBuilder
     private var statusIcon: some View {
         if let iconName = statusIconName {
-            Image(systemName: iconName)
-                .resizable()
-                .scaledToFit()
-                .padding(2)
-                .foregroundStyle(statusIconColor)
-                .frame(width: VdIconSize.md, height: VdIconSize.md)
+            VdIcon(iconName, size: VdIconSize.md, color: statusIconColor)
         }
     }
 

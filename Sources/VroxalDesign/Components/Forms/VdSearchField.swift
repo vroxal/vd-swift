@@ -101,12 +101,7 @@ public struct VdSearchField: View {
     }
 
     private var leadingIcon: some View {
-        Image(systemName: "magnifyingglass")
-            .resizable()
-            .scaledToFit()
-            .padding(2)
-            .frame(width: VdIconSize.md, height: VdIconSize.md)
-            .foregroundStyle(leadingIconColor)
+        VdIcon("magnifyingglass", size: VdIconSize.md, color: leadingIconColor)
     }
 
     private var inputField: some View {
@@ -130,12 +125,7 @@ public struct VdSearchField: View {
     @ViewBuilder
     private var statusIcon: some View {
         if let iconName = statusIconName {
-            Image(systemName: iconName)
-                .resizable()
-                .scaledToFit()
-                .padding(2)
-                .frame(width: VdIconSize.md, height: VdIconSize.md)
-                .foregroundStyle(statusIconColor)
+            VdIcon(iconName, size: VdIconSize.md, color: statusIconColor)
         }
     }
 

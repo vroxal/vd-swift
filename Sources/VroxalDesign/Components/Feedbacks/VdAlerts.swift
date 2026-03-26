@@ -24,7 +24,7 @@ private struct VdAlertTokens {
     let background: Color
     let border: Color
     let text: Color  // title + description
-    let icon: String  // SF Symbol name
+    let icon: String  // icon token (sf:/vd:)
     let iconColor: Color
 }
 
@@ -126,12 +126,7 @@ public struct VdAlert: View {
         let t = color.tokens
 
         HStack(alignment: .top, spacing: VdSpacing.sm) {
-            Image(systemName: t.icon)
-                .resizable()
-                .scaledToFit()
-                .padding(2)
-                .foregroundStyle(t.iconColor)
-                .frame(width: VdIconSize.md, height: VdIconSize.md)
+            VdIcon(t.icon, size: VdIconSize.md, color: t.iconColor)
             VStack(alignment: .leading, spacing: 0) {
                 Text(title)
                     .vdFont(VdFont.titleMedium)

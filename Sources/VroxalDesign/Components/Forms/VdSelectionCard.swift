@@ -20,7 +20,7 @@ public struct VdSelectionCard: View {
 
     private let selectionStyle: VdSelectionStyle
     @Binding private var isSelected: Bool
-    private let icon:           String?     // SF Symbol name
+    private let icon:           String?     // icon token (sf:/vd:)
     private let title:          String
     private let description:    String?
     private let isDisabled:     Bool
@@ -54,12 +54,7 @@ public struct VdSelectionCard: View {
 
                 // ── Icon (24pt) ───────────────────────────────
                 if let symbol = icon {
-                    Image(systemName: symbol)
-                        .resizable()
-                        .scaledToFit()
-                        .padding(2)
-                        .foregroundStyle(iconColor)
-                        .frame(width: VdIconSize.md, height: VdIconSize.md)
+                    VdIcon(symbol, size: VdIconSize.md, color: iconColor)
                 }
 
                 // ── Title + description ───────────────────────
@@ -125,9 +120,7 @@ public struct VdSelectionCard: View {
                             .opacity(isSelected ? 0 : 1)
                     }
                 if isSelected {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 11, weight: .bold))
-                        .foregroundStyle(Color.vdContentDefaultAlwaysLight)
+                    VdIcon("checkmark", size: 11, color: .vdContentDefaultAlwaysLight)
                 }
             }
             .frame(width: 20, height: 20)

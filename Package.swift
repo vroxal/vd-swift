@@ -13,10 +13,23 @@ let package = Package(
             name: "VroxalDesign",
             targets: ["VroxalDesign"]
         ),
+        // Optional direct icon access: import VroxalIcons
+        .library(
+            name: "VroxalIcons",
+            targets: ["VroxalIcons"]
+        ),
     ],
     targets: [
         .target(
+            name: "VroxalIcons",
+            path: "Sources/VroxalIcons",
+            resources: [
+                .process("Resources")
+            ]
+        ),
+        .target(
             name: "VroxalDesign",
+            dependencies: ["VroxalIcons"],
             path: "Sources/VroxalDesign",
             resources: [
                 // Poppins font files (add to Sources/VroxalDesign/Resources/)

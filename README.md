@@ -8,7 +8,7 @@ The package currently provides:
 - Typography tokens based on the Vroxal type scale
 - Shared spacing, radius, border-width, and icon-size constants
 - Reusable SwiftUI components (actions, forms, feedbacks, displays)
-- A small `onChangeCompat` helper for iOS 16 and iOS 17+
+- A dedicated `VroxalIcons` module for package-shipped icon assets
 
 ## Requirements
 
@@ -34,10 +34,11 @@ https://github.com/vroxal/vd-swift
 .package(url: "https://github.com/vroxal/vd-swift", from: "1.0.0")
 ```
 
-Then add `VroxalDesign` to your target dependencies and import it where needed:
+Then add `VroxalDesign` to your target dependencies (and `VroxalIcons` if you need direct icon APIs):
 
 ```swift
 import VroxalDesign
+import VroxalIcons
 ```
 
 ## Font Setup
@@ -71,6 +72,38 @@ struct MyApp: App {
         }
     }
 }
+```
+
+## Icon Usage
+
+Use icon string tokens in component icon props (`icon`, `leftIcon`, `rightIcon`, `leadingIcon`, `trailingIcon`, etc).
+
+Token formats:
+
+- `vd:<icon-name>` -> use a Vroxal icon asset (template tint)
+- `sf:<symbol-name>` -> use an SF Symbol
+- `<symbol-name>` (no prefix) -> SF Symbol (backward compatible)
+
+Examples:
+
+```swift
+VdIconButton(icon: "vd:chat-square-filled", action: {})
+VdIconButton(icon: "sf:xmark", action: {})
+
+VdButton(
+    "Continue",
+    leftIcon: "vd:arrow-right",
+    rightIcon: "sf:chevron.right",
+    action: {}
+)
+```
+
+Use `VdIcon` directly in custom UI:
+
+```swift
+VdIcon(.custom("chat-square-filled")) // defaults to VdIconSize.md
+VdIcon(.system("checkmark.circle.fill"), color: .vdContentSuccessBase)
+VdIcon("sf:xmark", size: VdIconSize.lg)
 ```
 
 ## Quick Start
@@ -255,6 +288,11 @@ vd-swift/
 │       ├── Colors.swift
 │       ├── Scale.swift
 │       └── Typography.swift
+├── Sources/VroxalIcons/
+│   ├── VroxalIcons.swift
+│   └── Resources/
+│       ├── Assets.xcassets/
+│       └── Icons/
 └── Tests/VroxalDesignTests/
 ```
 

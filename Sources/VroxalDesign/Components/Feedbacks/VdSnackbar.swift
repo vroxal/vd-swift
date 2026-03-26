@@ -12,7 +12,7 @@ public struct VdSnackbar: View {
     private let message: String
     private let action: String?
     private let onAction: (() -> Void)?
-    private let leadingIcon: String?  // SF Symbol name
+    private let leadingIcon: String?  // icon token (sf:/vd:)
     private let closable: Bool
     private let onClose: (() -> Void)?
 
@@ -40,12 +40,7 @@ public struct VdSnackbar: View {
         HStack(alignment: .top, spacing: 0) {
 
             if let icon = leadingIcon {
-                    Image(systemName: icon)
-                        .resizable()
-                        .scaledToFit()
-                        .padding(2)
-                        .foregroundStyle(Color.vdContentNeutralOnBase)
-                        .frame(width: VdIconSize.md, height: VdIconSize.md)
+                    VdIcon(icon, size: VdIconSize.md, color: .vdContentNeutralOnBase)
                         .padding(VdSpacing.sm)
             }
 
@@ -71,14 +66,8 @@ public struct VdSnackbar: View {
 
             if closable {
                 Button(action: { onClose?() }) {
-                    Image(systemName: "xmark")
-                        .resizable()
-                        .scaledToFit()
-                        .padding(VdSpacing.xs)
-                        .foregroundStyle(Color.vdContentNeutralOnBase).frame(
-                            width: VdIconSize.md,
-                            height: VdIconSize.md
-                        )
+                    VdIcon("xmark", size: VdIconSize.xs, color: .vdContentNeutralOnBase)
+                        .frame(width: VdIconSize.md, height: VdIconSize.md)
                 }
                 .padding(VdSpacing.sm)
                 .buttonStyle(.plain)

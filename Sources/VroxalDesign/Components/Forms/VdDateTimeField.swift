@@ -40,7 +40,7 @@
 //   placeholder    — text shown in the chip when selection is nil
 //   state          — VdInputState: default · disabled · error · success · warning
 //   isOptional     — Bool: shows "Optional" tag right of label
-//   leadingIcon    — SF Symbol name for leading icon slot
+//   leadingIcon    — icon token for leading slot (sf:/vd:)
 //   helperText     — optional helper/instruction text below field
 //   mode           — VdDateTimeFieldMode: .date · .time · .dateTime
 //   minimumDate    — optional lower bound for the picker
@@ -184,10 +184,7 @@ public struct VdDateTimeField: View {
 
             // Leading icon
             if let icon = leadingIcon {
-                Image(systemName: icon)
-                    .font(.system(size: VdIconSize.md))
-                    .foregroundStyle(leadingIconColor)
-                    .frame(width: VdIconSize.md, height: VdIconSize.md)
+                VdIcon(icon, size: VdIconSize.md, color: leadingIconColor)
             }
 
             // ── Compact DatePicker ─────────────────────────────
@@ -234,10 +231,7 @@ public struct VdDateTimeField: View {
 
             // Status icon (error / success / warning)
             if let statusIcon = statusIconName {
-                Image(systemName: statusIcon)
-                    .font(.system(size: VdIconSize.md))
-                    .foregroundStyle(statusIconColor)
-                    .frame(width: VdIconSize.md, height: VdIconSize.md)
+                VdIcon(statusIcon, size: VdIconSize.md, color: statusIconColor)
             }
         }
         .padding(.horizontal, VdSpacing.smMd)

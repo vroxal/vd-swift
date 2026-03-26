@@ -110,12 +110,7 @@ public struct VdTextField: View {
 
             //             Leading icon
             if let icon = leadingIcon {
-                Image(systemName: icon)
-                    .resizable()
-                    .scaledToFit()
-                    .padding(2)
-                    .foregroundStyle(leadingIconColor)
-                    .frame(width: VdIconSize.md, height: VdIconSize.md)
+                VdIcon(icon, size: VdIconSize.md, color: leadingIconColor)
             }
 
             //
@@ -158,13 +153,7 @@ public struct VdTextField: View {
 
             //Status icon
             if let statusIcon = statusIconName {
-                Image(systemName: statusIcon)
-                    .resizable()
-                    .scaledToFit()
-                    .padding(2)
-                    .font(.system(size: VdIconSize.sm))
-                    .foregroundStyle(statusIconColor)
-                    .frame(width: VdIconSize.md, height: VdIconSize.md)
+                VdIcon(statusIcon, size: VdIconSize.md, color: statusIconColor)
             }
 
             // Trailing action

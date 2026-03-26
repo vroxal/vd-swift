@@ -125,7 +125,7 @@ public struct VdSelectField<T: Hashable>: View {
                                 Text(optionLabel(option))
                                 if selection == option {
                                     Spacer()
-                                    Image(systemName: "checkmark")
+                                    VdIcon("checkmark", size: VdIconSize.xs)
                                 }
                             }
                         }
@@ -148,13 +148,7 @@ public struct VdSelectField<T: Hashable>: View {
 
             // Leading icon (optional)
             if let icon = leadingIcon {
-                Image(systemName: icon)
-                    .resizable()
-                    .scaledToFit()
-                    .padding(2)
-                    .font(.system(size: VdIconSize.sm))
-                    .foregroundStyle(leadingIconColor)
-                    .frame(width: VdIconSize.md, height: VdIconSize.md)
+                VdIcon(icon, size: VdIconSize.md, color: leadingIconColor)
             }
 
             // Selected value or placeholder
@@ -177,13 +171,7 @@ public struct VdSelectField<T: Hashable>: View {
             statusIcon
 
             // Caret chevron
-            Image(systemName: "chevron.down")
-                .resizable()
-                .scaledToFit()
-                .padding(2)
-                .font(.system(size: VdIconSize.sm))
-                .foregroundStyle(caretColor)
-                .frame(width: VdIconSize.md, height: VdIconSize.md)
+            VdIcon("chevron.down", size: VdIconSize.md, color: caretColor)
         }
         .padding(.horizontal, VdSpacing.smMd)
         .padding(.vertical, VdSpacing.smMd)
@@ -216,29 +204,11 @@ public struct VdSelectField<T: Hashable>: View {
     private var statusIcon: some View {
         switch state {
         case .error:
-            Image(systemName: "exclamationmark.circle.fill")
-                .resizable()
-                .scaledToFit()
-                .padding(2)
-                .font(.system(size: VdIconSize.sm))
-                .frame(width: VdIconSize.md, height: VdIconSize.md)
-                .foregroundStyle(Color.vdContentErrorBase)
+            VdIcon("exclamationmark.circle.fill", size: VdIconSize.md, color: .vdContentErrorBase)
         case .success:
-            Image(systemName: "checkmark.circle.fill")
-                .resizable()
-                .scaledToFit()
-                .padding(2)
-                .font(.system(size: VdIconSize.sm))
-                .frame(width: VdIconSize.md, height: VdIconSize.md)
-                .foregroundStyle(Color.vdContentSuccessBase)
+            VdIcon("checkmark.circle.fill", size: VdIconSize.md, color: .vdContentSuccessBase)
         case .warning:
-            Image(systemName: "exclamationmark.triangle.fill")
-                .resizable()
-                .scaledToFit()
-                .padding(2)
-                .font(.system(size: VdIconSize.sm))
-                .frame(width: VdIconSize.md, height: VdIconSize.md)
-                .foregroundStyle(Color.vdContentWarningBase)
+            VdIcon("exclamationmark.triangle.fill", size: VdIconSize.md, color: .vdContentWarningBase)
         default:
             EmptyView()
         }

@@ -374,13 +374,7 @@ public struct VdButton: View {
         return ZStack {
             HStack(spacing: VdSpacing.sm) {
                 if let icon = leftIcon {
-                    Image(systemName: icon)
-                        .resizable()
-                        .scaledToFit()
-                        .padding(4)
-                        .font(.system(size: VdIconSize.sm))
-                        .foregroundStyle(tokens.label)
-                        .frame(width: size.iconSize, height: size.iconSize)
+                    VdIcon(icon, size: size.iconSize, color: tokens.label)
                 }
 
                 Text(label)
@@ -390,13 +384,7 @@ public struct VdButton: View {
                     .padding(.vertical, size.labelVerticalPadding)
 
                 if let icon = rightIcon {
-                    Image(systemName: icon)
-                        .resizable()
-                        .scaledToFit()
-                        .padding(4)
-                        .font(.system(size: VdIconSize.sm))
-                        .foregroundStyle(tokens.label)
-                        .frame(width: size.iconSize, height: size.iconSize)
+                    VdIcon(icon, size: size.iconSize, color: tokens.label)
 
                 }
             }

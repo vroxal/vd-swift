@@ -43,6 +43,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import SwiftUI
+import VroxalIcons
 
 // ─────────────────────────────────────────────────────────────
 // MARK: — Supporting types
@@ -96,7 +97,7 @@ public enum VdIconButtonSize {
 
 public struct VdIconButton: View {
 
-    private let icon:       String              // SF Symbol name
+    private let icon:       VdIconSource        // SF Symbol or package icon asset
     private let color:      VdIconButtonColor
     private let style:      VdIconButtonStyle
     private let size:       VdIconButtonSize
@@ -119,7 +120,31 @@ public struct VdIconButton: View {
         iconColorOverride: Color?     = nil,
         action:     @escaping () -> Void
     ) {
-        self.icon       = icon
+        self.icon       = .parse(icon)
+        self.color      = color
+        self.style      = style
+        self.size       = size
+        self.rounded    = rounded
+        self.isLoading  = isLoading
+        self.iconColorOverride = iconColorOverride
+        self.action     = action
+        // isDisabled parameter is preserved for backward compatibility;
+        // it is applied via .disabled() in body below.
+        self._backCompatDisabled = isDisabled
+    }
+
+    public init(
+        iconSource: VdIconSource,
+        color:      VdIconButtonColor = .primary,
+        style:      VdIconButtonStyle = .solid,
+        size:       VdIconButtonSize  = .medium,
+        rounded:    Bool              = false,
+        isLoading:  Bool              = false,
+        isDisabled: Bool              = false,
+        iconColorOverride: Color?     = nil,
+        action:     @escaping () -> Void
+    ) {
+        self.icon       = iconSource
         self.color      = color
         self.style      = style
         self.size       = size
@@ -160,12 +185,11 @@ public struct VdIconButton: View {
                         .tint(resolvedIconColor(isPressed: false))
                         .scaleEffect(size == .small ? 0.7 : 1.0)
                 } else {
-                    Image(systemName: icon)
-                        .resizable()
-                        .scaledToFit()
-                        .padding(2)
-                        .frame(width: size.iconSize, height: size.iconSize)
-                        }
+                    VdIcon(
+                        source: icon,
+                        size: size.iconSize
+                    )
+                }
             }
             .frame(width: size.dimension, height: size.dimension)
         }
@@ -362,6 +386,16 @@ private struct VdIconButtonPressStyle: ButtonStyle {
                     VdIconButton(icon: "xmark", size: .small,  action: {})
                     VdIconButton(icon: "ellipsis", size: .medium, action: {})
                     VdIconButton(icon: "ellipsis", size: .large,  action: {})
+                }
+            }
+
+            // ── Package assets (VroxalIcons) ────────────────
+            previewSection("Package Icons (VroxalIcons)") {
+                HStack(spacing: VdSpacing.sm) {
+                    VdIconButton(icon: "vd:chat-square-filled", style: .solid, action: {})
+                    VdIconButton(icon: "vd:key-square-two", style: .outlined, action: {})
+                    VdIconButton(icon: "vd:phone-rounded", color: .neutral, style: .subtle, rounded: true, action: {})
+                    VdIconButton(icon: "vd:clipboard-check", color: .neutral, style: .transparent, action: {})
                 }
             }
 

@@ -304,9 +304,7 @@ public struct VdDivider: View {
                                 .vdFont(.bodyMedium)
                                 .foregroundStyle(Color.vdContentDefaultBase)
                             Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 14, weight: .medium))
-                                .foregroundStyle(Color.vdContentDefaultTertiary)
+                            VdIcon("chevron.right", size: 14, color: .vdContentDefaultTertiary)
                         }
                         .padding(.vertical, VdSpacing.smMd)
                         .padding(.horizontal, VdSpacing.md)

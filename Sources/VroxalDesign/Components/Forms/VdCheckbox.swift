@@ -71,9 +71,7 @@ public struct VdCheckbox: View {
 
             // ── Check mark ─────────────────────────────────
             if isChecked && !isIndeterminate {
-                Image(systemName: "checkmark")
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundStyle(Color.vdContentDefaultAlwaysLight)
+                VdIcon("checkmark", size: 11, color: .vdContentDefaultAlwaysLight)
             }
 
             // ── Indeterminate dash ──────────────────────────

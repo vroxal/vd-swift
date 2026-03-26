@@ -99,11 +99,7 @@ public struct VdEmptyState: View {
     }
 
     private var iconContainer: some View {
-        Image(systemName: icon)
-            .resizable()
-            .scaledToFit()
-            .padding(VdSpacing.xs)
-            .foregroundStyle(Color.vdContentDefaultSecondary)
+        VdIcon(icon, size: VdIconSize.lg, color: .vdContentDefaultSecondary)
             .frame(width: VdIconSize.xl, height: VdIconSize.xl)
             .padding(VdSpacing.md)
             .background(boxed ? Color.vdBackgroundDefaultBase : Color.vdBackgroundDefaultTertiary)
