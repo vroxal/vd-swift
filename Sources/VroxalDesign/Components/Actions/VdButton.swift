@@ -270,9 +270,9 @@ extension VdButtonSize {
 
     fileprivate var labelStyle: VdTextStyle {
         switch self {
-        case .small: return VdFont.labelSmall  // 12/16
-        case .medium: return VdFont.labelMedium  // 14/24
-        case .large: return .labelLarge  // 16/24
+        case .small: return VdFont.labelSmall
+        case .medium: return VdFont.labelMedium
+        case .large: return .labelLarge
         }
     }
 
@@ -292,9 +292,9 @@ extension VdButtonSize {
 
     fileprivate var spinnerScale: CGFloat {
         switch self {
-        case .small: return 0.8
+        case .small: return 0.9
         case .medium: return 1
-        case .large: return 1.2
+        case .large: return 1.1
         }
     }
 }
@@ -437,58 +437,26 @@ private struct VdButtonPressStyle: ButtonStyle {
 #Preview("VdButton — All Variants") {
     ScrollView {
         VStack(alignment: .leading, spacing: VdSpacing.xl) {
-            previewSection("Size") {
-                VStack(alignment: .leading, spacing: VdSpacing.sm) {
-
-                    VdButton(
-                        "Small",
-                        size: .small,
-                        isLoading: true,
-
-                        leftIcon: "arrow.up",
-                        rightIcon: "chevron.right",
-                        action: {}
-                    )
-                    VdButton(
-                        "Medium",
-                        size: .medium,
-                        isLoading: true,
-
-                        leftIcon: "arrow.up",
-                        rightIcon: "chevron.right",
-                        action: {}
-                    )
-                    VdButton(
-                        "Large",
-                        size: .large,
-                        isLoading: true,
-
-                        leftIcon: "arrow.up",
-                        rightIcon: "chevron.right",
-                        action: {}
-                    )
-                }
-            }
+ 
             previewSection("Icons") {
                 HStack(spacing: VdSpacing.sm) {
                     VdButton(
                         "Upload",
                         size: .small,
-                        leftIcon: "arrow.up",
+                        leftIcon: "vd:arrow-up",
                         action: {}
                     )
                     VdButton(
                         "Next",
                         size: .medium,
-                        rightIcon: "chevron.right",
+                        rightIcon: "sf:arrow.up",
                         action: {}
                     )
                     VdButton(
                         "Share",
                         color: .neutral,
                         style: .outlined,
-                        size: .medium,
-                        leftIcon: "square.and.arrow.up",
+                        leftIcon: "vd:arrow-right",
                         action: {}
                     )
                 }

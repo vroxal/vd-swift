@@ -57,7 +57,7 @@ public struct VdIcon: View {
         let base = Image.vdIcon(source)
             .resizable()
             .scaledToFit()
-            .padding(2)
+            .padding(resolvedInset)
             .frame(width: size, height: size)
 
         if let color {

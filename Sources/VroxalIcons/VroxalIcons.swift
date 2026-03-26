@@ -47,7 +47,7 @@ public enum VdIconSource: Hashable, Sendable {
     public func defaultInset(for size: CGFloat) -> CGFloat {
         switch self {
         case .system:
-            return size >= 16 ? 2 : 0
+            return 2
         case .custom, .asset:
             return 0
         }

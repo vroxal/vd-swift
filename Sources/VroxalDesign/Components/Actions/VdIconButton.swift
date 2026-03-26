@@ -9,12 +9,12 @@
 //   VdIconButtonColor  — primary · neutral
 //   VdIconButtonStyle  — solid · subtle · outlined · transparent
 //   VdIconButtonSize   — small (32pt) · medium (40pt) · large (56pt)
-//   rounded            — Bool: radius/sm (8pt) vs radius/full (circle)
+//   rounded            — Bool: size-based radius vs full (circle)
 //
-// SIZES
-//   Small   32×32pt  padding 4pt   icon container 16pt
+// SIZES  (computed as iconSize + padding * 2)
+//   Small   32×32pt  padding 4pt   icon container 24pt
 //   Medium  40×40pt  padding 8pt   icon container 24pt
-//   Large   56×56pt  padding 16pt  icon container 32pt
+//   Large   56×56pt  padding 12pt  icon container 32pt
 //
 // TOKEN PATTERNS  (mirrors VdButton exactly)
 //   Solid        bg=BackgroundBase        icon=ContentOnBase
@@ -62,31 +62,36 @@ public enum VdIconButtonStyle {
 }
 
 public enum VdIconButtonSize {
-    case small    // 32×32pt
-    case medium   // 40×40pt
-    case large    // 56×56pt
+    case small
+    case medium
+    case large
 
     var dimension: CGFloat {
-        switch self {
-        case .small:  return 32
-        case .medium: return 40
-        case .large:  return 56
-        }
+        iconSize + (padding * 2)
     }
 
     var padding: CGFloat {
         switch self {
         case .small:  return VdSpacing.xs    // 4pt
         case .medium: return VdSpacing.sm    // 8pt
-        case .large:  return VdSpacing.md    // 16pt
+        case .large:  return VdSpacing.smMd  // 12pt
         }
     }
 
     var iconSize: CGFloat {
         switch self {
-        case .small:  return VdIconSize.md   // 16pt
-        case .medium: return VdIconSize.md   // 24pt
-        case .large:  return VdIconSize.lg   // 32pt
+        case .small:  return VdIconSize.md   
+        case .medium: return VdIconSize.md   
+        case .large:  return VdIconSize.lg   
+        }
+    }
+
+    var cornerRadius: CGFloat {
+        switch self {
+        case .small, .medium:
+            return VdRadius.md
+        case .large:
+            return VdRadius.lg
         }
     }
 }
@@ -167,17 +172,6 @@ public struct VdIconButton: View {
     public var body: some View {
         Button(action: action) {
             ZStack {
-                // ── Background shell ──────────────────────────
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(Color.clear)  // placeholder — style fills it
-
-                // ── Focus ring ────────────────────────────────
-                if isFocused {
-                    RoundedRectangle(cornerRadius: cornerRadius + 3)
-                        .strokeBorder(Color.vdBorderPrimaryTertiary, lineWidth: VdBorderWidth.md)
-                        .padding(-3)
-                }
-
                 // ── Icon or spinner ───────────────────────────
                 if isLoading {
                     ProgressView()
@@ -191,7 +185,14 @@ public struct VdIconButton: View {
                     )
                 }
             }
-            .frame(width: size.dimension, height: size.dimension)
+            .padding(size.padding)
+            .overlay {
+                if isFocused {
+                    RoundedRectangle(cornerRadius: cornerRadius + 3)
+                        .strokeBorder(Color.vdBorderPrimaryTertiary, lineWidth: VdBorderWidth.md)
+                        .padding(-3)
+                }
+            }
         }
         .buttonStyle(
             VdIconButtonPressStyle(
@@ -214,7 +215,7 @@ public struct VdIconButton: View {
     // ─────────────────────────────────────────────────────────
 
     private var cornerRadius: CGFloat {
-        rounded ? size.dimension / 2 : VdRadius.sm     // full circle vs 8pt
+        rounded ? size.dimension / 2 : size.cornerRadius
     }
 
     private var visualOpacity: Double {
@@ -383,9 +384,9 @@ private struct VdIconButtonPressStyle: ButtonStyle {
             // ── Sizes ─────────────────────────────────────────
             previewSection("Sizes — Small / Medium / Large") {
                 HStack(spacing: VdSpacing.md) {
-                    VdIconButton(icon: "xmark", size: .small,  action: {})
-                    VdIconButton(icon: "ellipsis", size: .medium, action: {})
-                    VdIconButton(icon: "ellipsis", size: .large,  action: {})
+                    VdIconButton(icon: "vd:cross", size: .small,  action: {})
+                    VdIconButton(icon: "vd:menu-filled", size: .medium, action: {})
+                    VdIconButton(icon: "vd:user-circle", size: .large,  action: {})
                 }
             }
 
