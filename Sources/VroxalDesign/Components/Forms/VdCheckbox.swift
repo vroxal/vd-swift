@@ -71,14 +71,13 @@ public struct VdCheckbox: View {
 
             // ── Check mark ─────────────────────────────────
             if isChecked && !isIndeterminate {
-                VdIcon("vd:tick", size: 11, color: .vdContentDefaultAlwaysLight)
+                VdIcon("vd:check", size: 20, color: .vdContentDefaultAlwaysLight)
             }
 
             // ── Indeterminate dash ──────────────────────────
             if isIndeterminate {
-                RoundedRectangle(cornerRadius: 1)
-                    .fill(Color.vdContentDefaultAlwaysLight)
-                    .frame(width: 10, height: 2)
+                VdIcon("vd:minus", size: 20, color: .vdContentDefaultAlwaysLight)
+            
             }
 
             // ── Focus ring (2pt, inset -3pt) ─────────────────

@@ -34,7 +34,7 @@ public struct VdEmptyState: View {
     public init(
         title: String = "Title goes here",
         description: String = "Nothing more exciting happening here in terms of content, but just filling up the space to make it look representative.",
-        icon: String = "square.grid.2x2",
+        icon: String = "vd:info-circle-filled",
         boxed: Bool = true,
         actions: Bool = true,
         primaryAction: Bool = true,
@@ -99,7 +99,7 @@ public struct VdEmptyState: View {
     }
 
     private var iconContainer: some View {
-        VdIcon(icon, size: VdIconSize.lg, color: .vdContentDefaultSecondary)
+        VdIcon(icon, size: VdIconSize.xl, color: .vdContentDefaultSecondary)
             .frame(width: VdIconSize.xl, height: VdIconSize.xl)
             .padding(VdSpacing.md)
             .background(boxed ? Color.vdBackgroundDefaultBase : Color.vdBackgroundDefaultTertiary)

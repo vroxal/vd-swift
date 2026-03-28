@@ -1,9 +1,8 @@
-// Components/Alerts/VdAlert.swift — Vroxal Design
-// ─────────────────────────────────────────────────────────────
+// Components/Alerts/VdAlert.swift — Vroxal Design System
 
 import SwiftUI
 
-// ─────────────────────────────────────────────────────────────
+//─────────────────────────────────────────────────────────────
 // MARK: — VdAlertColor
 // ─────────────────────────────────────────────────────────────
 
@@ -23,9 +22,8 @@ public enum VdAlertColor {
 private struct VdAlertTokens {
     let background: Color
     let border: Color
-    let text: Color  // title + description
-    let icon: String  // icon token (sf:/vd:)
-    let iconColor: Color
+    let contentColor: Color
+    let icon: String
 }
 
 extension VdAlertColor {
@@ -35,49 +33,43 @@ extension VdAlertColor {
             return VdAlertTokens(
                 background: .vdBackgroundPrimarySecondary,
                 border: .vdBorderPrimarySecondary,
-                text: .vdContentPrimaryOnSecondary,
-                icon: "square.grid.2x2",
-                iconColor: .vdContentPrimaryOnSecondary
+                contentColor: .vdContentPrimaryOnSecondary,
+                icon: "vd:info-circle-filled",
             )
         case .neutral:
             return VdAlertTokens(
                 background: .vdBackgroundNeutralSecondary,
                 border: .vdBorderNeutralSecondary,
-                text: .vdContentNeutralOnSecondary,
-                icon: "square.grid.2x2",
-                iconColor: .vdContentNeutralOnSecondary
+                contentColor: .vdContentNeutralOnSecondary,
+                icon: "vd:info-circle-filled",
             )
         case .success:
             return VdAlertTokens(
                 background: .vdBackgroundSuccessSecondary,
                 border: .vdBorderSuccessSecondary,
-                text: .vdContentSuccessOnSecondary,
-                icon: "checkmark.circle.fill",
-                iconColor: .vdContentSuccessBase
+                contentColor: .vdContentSuccessOnSecondary,
+                icon: "vd:check-circle-filled",
             )
         case .error:
             return VdAlertTokens(
                 background: .vdBackgroundErrorSecondary,
                 border: .vdBorderErrorSecondary,
-                text: .vdContentErrorOnSecondary,
-                icon: "exclamationmark.circle.fill",
-                iconColor: .vdContentErrorBase
+                contentColor: .vdContentErrorOnSecondary,
+                icon: "vd:danger-circle-filled",
             )
         case .warning:
             return VdAlertTokens(
                 background: .vdBackgroundWarningSecondary,
                 border: .vdBorderWarningSecondary,
-                text: .vdContentWarningOnSecondary,
-                icon: "exclamationmark.triangle.fill",
-                iconColor: .vdContentWarningBase
+                contentColor: .vdContentWarningOnSecondary,
+                icon: "vd:danger-triangle-filled",
             )
         case .info:
             return VdAlertTokens(
                 background: .vdBackgroundInfoSecondary,
                 border: .vdBorderInfoSecondary,
-                text: .vdContentInfoOnSecondary,
-                icon: "info.circle.fill",
-                iconColor: .vdContentInfoBase
+                contentColor: .vdContentInfoOnSecondary,
+                icon: "vd:info-circle-filled",
             )
         }
     }
@@ -90,7 +82,8 @@ extension VdAlertColor {
 public struct VdAlert: View {
 
     private let color: VdAlertColor
-    private let title: String
+    private let icon: String?  // nil = use color default
+    private let title: String?
     private let description: String
     private let action: String?
     private let actionInline: Bool
@@ -100,7 +93,8 @@ public struct VdAlert: View {
 
     public init(
         color: VdAlertColor = .primary,
-        title: String,
+        icon: String? = nil,
+        title: String? = nil,
         description: String,
         action: String? = nil,
         actionInline: Bool = false,
@@ -109,6 +103,7 @@ public struct VdAlert: View {
         onClose: (() -> Void)? = nil
     ) {
         self.color = color
+        self.icon = icon
         self.title = title
         self.description = description
         self.action = action
@@ -126,13 +121,14 @@ public struct VdAlert: View {
         let t = color.tokens
 
         HStack(alignment: .top, spacing: VdSpacing.sm) {
-            VdIcon(t.icon, size: VdIconSize.md, color: t.iconColor)
+            VdIcon(t.icon, size: VdIconSize.md, color: t.contentColor)
             VStack(alignment: .leading, spacing: 0) {
-                Text(title)
-                    .vdFont(VdFont.titleMedium)
-                    .foregroundStyle(t.text)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
+                if let title {
+                    Text(title)
+                        .vdFont(VdFont.titleMedium)
+                        .foregroundStyle(t.contentColor)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
                 Text(description)
                     .vdFont(VdFont.bodyMedium)
                     .foregroundStyle(Color.vdContentDefaultBase)
@@ -157,9 +153,8 @@ public struct VdAlert: View {
                     .padding(.trailing, -VdSpacing.xs)
             }
 
-
         }
-        .padding( VdSpacing.md)
+        .padding(VdSpacing.md)
         .background(t.background)
         .clipShape(
             RoundedRectangle(cornerRadius: VdRadius.md, style: .continuous)
@@ -169,23 +164,24 @@ public struct VdAlert: View {
                 .strokeBorder(t.border, lineWidth: VdBorderWidth.sm)
         }
     }
-
     // ─────────────────────────────────────────────────────────
     // MARK: Subviews
     // ─────────────────────────────────────────────────────────
 
+    // Action — Figma: Label/Medium, always vdContentPrimaryOnSecondary
     private func actionButton(label: String) -> some View {
         Button(action: { onAction?() }) {
             Text(label)
-                .vdFont(VdFont.labelMedium)
+                .vdFont(.labelMedium)
                 .foregroundStyle(Color.vdContentPrimaryOnSecondary)
+                .lineLimit(1)
         }
         .buttonStyle(.plain)
     }
 
     private var closeButton: some View {
         VdIconButton(
-            icon: "xmark",
+            icon: "vd:xmark",
             color: .neutral,
             style: .transparent,
             size: .small,
@@ -201,25 +197,16 @@ public struct VdAlert: View {
 #Preview("VdAlert — All Variants") {
     ScrollView {
         VStack(alignment: .leading, spacing: VdSpacing.xl) {
+
+            // ── Standard (action below, closable) ─────────────
             previewSection("Standard · Action Below · Closable") {
                 VdAlert(
                     color: .primary,
-                    title: "Title for the alert goes here",
-                    description:
-                        "Nothing more exciting happening here in terms of content.",
-                    action: "Alert Action",
-                    actionInline: true,
-                    closable: true,
-                    onAction: {},
-                    onClose: {}
-                )
-
-                VdAlert(
-                    color: .primary,
-                    title: "Title for the alert goes here",
+                    icon: "vd:user-circle-filled",
                     description:
                         "Nothing more exciting happening here in terms of content, but just filling up the space to make it look more representative.",
                     action: "Alert Action",
+                    actionInline: true,
                     closable: true,
                     onAction: {},
                     onClose: {}
@@ -275,6 +262,56 @@ public struct VdAlert: View {
                     description:
                         "Version 2.1 includes performance improvements and bug fixes.",
                     action: "Install now",
+                    closable: true,
+                    onAction: {},
+                    onClose: {}
+                )
+            }
+
+            // ── Custom icon override ──────────────────────────
+            previewSection("Custom Icon Override") {
+                VdAlert(
+                    color: .primary,
+                    icon: "person.crop.circle.fill",
+                    title: "Profile updated",
+                    description:
+                        "Your account information has been saved successfully.",
+                    action: "View profile",
+                    closable: true,
+                    onAction: {},
+                    onClose: {}
+                )
+
+                VdAlert(
+                    color: .error,
+                    icon: "externaldrive.badge.xmark",
+                    title: "Storage full",
+                    description:
+                        "You have run out of storage space. Delete files to continue.",
+                    action: "Manage storage",
+                    closable: true,
+                    onAction: {},
+                    onClose: {}
+                )
+
+                VdAlert(
+                    color: .warning,
+                    icon: "vd:wi-fi-router",
+                    title: "Weak connection",
+                    description:
+                        "Your internet connection is unstable. Some features may not work.",
+                    closable: true,
+                    onClose: {}
+                )
+
+                VdAlert(
+                    color: .success,
+                    icon: "vd:cart-filled",
+                    title: "Order shipped",
+                    description:
+                        "Your package is on its way and will arrive in 2–3 business days.",
+                    action: "Track order",
+                    actionInline: true,
                     closable: true,
                     onAction: {},
                     onClose: {}
@@ -382,7 +419,7 @@ private func previewSection<Content: View>(
 ) -> some View {
     VStack(alignment: .leading, spacing: VdSpacing.sm) {
         Text(title)
-            .vdFont(VdFont.labelSmall)
+            .vdFont(.labelSmall)
             .foregroundStyle(Color.vdContentDefaultTertiary)
         content()
     }
@@ -419,6 +456,7 @@ private struct InteractiveDemo: View {
             if showInfo {
                 VdAlert(
                     color: .info,
+                    icon: "calendar.badge.clock",
                     title: "Scheduled maintenance",
                     description:
                         "The service will be unavailable on Sunday 2–4am.",

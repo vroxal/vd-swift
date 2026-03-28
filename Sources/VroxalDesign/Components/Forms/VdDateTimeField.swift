@@ -210,18 +210,11 @@ public struct VdDateTimeField: View {
                 )
                 .datePickerStyle(.compact)
                 .labelsHidden()
-                // Tint the chip text/icon to match value colour
                 .tint(valueColor)
-                // When no date is selected yet, hide the picker chip
-                // so only the placeholder shows. First interaction
-                // sets selection = internalDate via onChange above.
                 .opacity(selection == nil ? 0 : 1)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                // Allow taps even when hidden so first tap works
                 .contentShape(Rectangle())
                 .onTapGesture {
-                    // On first tap with no prior selection, set
-                    // internalDate → triggers onChange → sets selection
                     if selection == nil {
                         selection = internalDate
                     }
@@ -312,9 +305,9 @@ public struct VdDateTimeField: View {
 
     private var statusIconName: String? {
         switch state {
-        case .error:   return "exclamationmark.circle.fill"
-        case .success: return "checkmark.circle.fill"
-        case .warning: return "exclamationmark.triangle.fill"
+        case .error:   return "vd:danger-circle-filled"
+        case .success: return "vd:check-circle-filled"
+        case .warning: return "vd:danger-triangle-filled"
         default:       return nil
         }
     }

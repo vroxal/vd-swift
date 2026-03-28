@@ -120,7 +120,7 @@ public struct VdSelectionCard: View {
                             .opacity(isSelected ? 0 : 1)
                     }
                 if isSelected {
-                    VdIcon("checkmark", size: 11, color: .vdContentDefaultAlwaysLight)
+                    VdIcon("vd:check", size: 20, color: .vdContentDefaultAlwaysLight)
                 }
             }
             .frame(width: 20, height: 20)

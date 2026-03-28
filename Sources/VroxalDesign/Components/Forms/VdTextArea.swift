@@ -149,7 +149,6 @@ public struct VdTextArea: View {
                     style: .transparent,
                     size: .small,
                     isDisabled: state == .disabled,
-                    iconColorOverride: .vdContentDefaultTertiary,
                     action: action
                 )
                 .padding(.top, VdSpacing.smMd)
@@ -273,9 +272,9 @@ public struct VdTextArea: View {
 
     private var statusIconName: String? {                    // ← mirrors TextField pattern
         switch state {
-        case .error:   return "exclamationmark.circle.fill"
-        case .success: return "checkmark.circle.fill"
-        case .warning: return "exclamationmark.triangle.fill"
+        case .error:   return "vd:danger-circle-filled"
+        case .success: return "vd:check-circle-filled"
+        case .warning: return "vd:danger-triangle-filled"
         default:       return nil
         }
     }

@@ -101,7 +101,7 @@ public struct VdSearchField: View {
     }
 
     private var leadingIcon: some View {
-        VdIcon("magnifyingglass", size: VdIconSize.md, color: leadingIconColor)
+        VdIcon("vd:magnifier", size: VdIconSize.md, color: leadingIconColor)
     }
 
     private var inputField: some View {
@@ -133,12 +133,11 @@ public struct VdSearchField: View {
     private var clearAction: some View {
         if showsClearAction && !text.isEmpty {
             VdIconButton(
-                icon: clearIconName,
+                icon: "vd:xmark",
                 color: .neutral,
                 style: .transparent,
                 size: .small,
                 isDisabled: state == .disabled,
-                iconColorOverride: clearIconColor,
                 action: clear
             )
         }
@@ -152,9 +151,6 @@ public struct VdSearchField: View {
         }
     }
 
-    private var clearIconName: String {
-        "xmark"
-    }
 
     private var containerBackground: Color {
         switch state {
@@ -196,11 +192,11 @@ public struct VdSearchField: View {
     private var statusIconName: String? {
         switch state {
         case .error:
-            return "exclamationmark.circle.fill"
+            return "vd:danger-circle-filled"
         case .success:
-            return "checkmark.circle.fill"
+            return "vd:check-circle-filled"
         case .warning:
-            return "exclamationmark.triangle.fill"
+            return "vd:danger-triangle-filled"
         case .default, .disabled:
             return nil
         }

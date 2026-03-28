@@ -439,24 +439,25 @@ private struct VdButtonPressStyle: ButtonStyle {
         VStack(alignment: .leading, spacing: VdSpacing.xl) {
  
             previewSection("Icons") {
-                HStack(spacing: VdSpacing.sm) {
+                VStack(alignment:.leading, spacing: VdSpacing.sm) {
                     VdButton(
                         "Upload",
                         size: .small,
                         leftIcon: "vd:arrow-up",
                         action: {}
-                    )
+                    ).disabled(true)
+
                     VdButton(
                         "Next",
                         size: .medium,
-                        rightIcon: "sf:arrow.up",
+                        rightIcon: "vd:arrow-right",
                         action: {}
                     )
                     VdButton(
                         "Share",
                         color: .neutral,
                         style: .outlined,
-                        leftIcon: "vd:arrow-right",
+                        size: .large,
                         action: {}
                     )
                 }

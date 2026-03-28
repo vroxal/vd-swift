@@ -108,7 +108,6 @@ public struct VdIconButton: View {
     private let size:       VdIconButtonSize
     private let rounded:    Bool
     private let isLoading:  Bool
-    private let iconColorOverride: Color?
     private let action:     () -> Void
 
     @Environment(\.isEnabled) private var isEnabled
@@ -122,7 +121,6 @@ public struct VdIconButton: View {
         rounded:    Bool              = false,
         isLoading:  Bool              = false,
         isDisabled: Bool              = false,
-        iconColorOverride: Color?     = nil,
         action:     @escaping () -> Void
     ) {
         self.icon       = .parse(icon)
@@ -131,7 +129,6 @@ public struct VdIconButton: View {
         self.size       = size
         self.rounded    = rounded
         self.isLoading  = isLoading
-        self.iconColorOverride = iconColorOverride
         self.action     = action
         // isDisabled parameter is preserved for backward compatibility;
         // it is applied via .disabled() in body below.
@@ -146,7 +143,6 @@ public struct VdIconButton: View {
         rounded:    Bool              = false,
         isLoading:  Bool              = false,
         isDisabled: Bool              = false,
-        iconColorOverride: Color?     = nil,
         action:     @escaping () -> Void
     ) {
         self.icon       = iconSource
@@ -155,7 +151,6 @@ public struct VdIconButton: View {
         self.size       = size
         self.rounded    = rounded
         self.isLoading  = isLoading
-        self.iconColorOverride = iconColorOverride
         self.action     = action
         // isDisabled parameter is preserved for backward compatibility;
         // it is applied via .disabled() in body below.
@@ -304,7 +299,6 @@ public struct VdIconButton: View {
 
     private func resolvedIconColor(isPressed: Bool) -> Color {
         if !isEnabled { return .vdContentDefaultDisabled }
-        if let override = iconColorOverride { return override }
         switch style {
         case .solid:
             switch color {
@@ -384,8 +378,9 @@ private struct VdIconButtonPressStyle: ButtonStyle {
             // ── Sizes ─────────────────────────────────────────
             previewSection("Sizes — Small / Medium / Large") {
                 HStack(spacing: VdSpacing.md) {
-                    VdIconButton(icon: "vd:cross", size: .small,  action: {})
-                    VdIconButton(icon: "vd:menu-filled", size: .medium, action: {})
+                    VdIconButton(icon: "vd:xmark", size: .small,  action: {})
+                    VdIconButton(icon: "sf:xmark", size: .small,  action: {})
+                    VdIconButton(icon: "vd:cart", size: .medium, action: {})
                     VdIconButton(icon: "vd:user-circle", size: .large,  action: {})
                 }
             }
@@ -394,8 +389,8 @@ private struct VdIconButtonPressStyle: ButtonStyle {
             previewSection("Package Icons (VroxalIcons)") {
                 HStack(spacing: VdSpacing.sm) {
                     VdIconButton(icon: "vd:chat-square-filled", style: .solid, action: {})
-                    VdIconButton(icon: "vd:key-square-two", style: .outlined, action: {})
-                    VdIconButton(icon: "vd:phone-rounded", color: .neutral, style: .subtle, rounded: true, action: {})
+                    VdIconButton(icon: "vd:key-minimalistic", style: .outlined, action: {})
+                    VdIconButton(icon: "vd:call-phone", color: .neutral, style: .subtle, rounded: true, action: {})
                     VdIconButton(icon: "vd:clipboard-check", color: .neutral, style: .transparent, action: {})
                 }
             }

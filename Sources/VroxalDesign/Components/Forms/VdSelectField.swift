@@ -171,7 +171,7 @@ public struct VdSelectField<T: Hashable>: View {
             statusIcon
 
             // Caret chevron
-            VdIcon("chevron.down", size: VdIconSize.md, color: caretColor)
+            VdIcon("vd:chevron-down", size: VdIconSize.md, color: caretColor)
         }
         .padding(.horizontal, VdSpacing.smMd)
         .padding(.vertical, VdSpacing.smMd)

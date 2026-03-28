@@ -12,7 +12,7 @@ public struct VdSnackbar: View {
     private let message: String
     private let action: String?
     private let onAction: (() -> Void)?
-    private let leadingIcon: String?  // icon token (sf:/vd:)
+    private let leadingIcon: String?
     private let closable: Bool
     private let onClose: (() -> Void)?
 
@@ -40,8 +40,8 @@ public struct VdSnackbar: View {
         HStack(alignment: .top, spacing: 0) {
 
             if let icon = leadingIcon {
-                    VdIcon(icon, size: VdIconSize.md, color: .vdContentNeutralOnBase)
-                        .padding(VdSpacing.sm)
+                VdIcon(icon, size: VdIconSize.md, color: .vdContentNeutralOnBase)
+                    .padding(VdSpacing.sm)
             }
 
             // ── Message ───────────────────────────────────────
@@ -50,7 +50,6 @@ public struct VdSnackbar: View {
                 .foregroundStyle(Color.vdContentNeutralOnBase)
                 .frame(maxWidth: .infinity, minHeight: 24, alignment: .leading)
                 .padding(VdSpacing.sm)
-
 
             if let label = action {
                 Button(action: { onAction?() }) {
@@ -61,32 +60,25 @@ public struct VdSnackbar: View {
                 }
                 .buttonStyle(.plain)
                 .padding(VdSpacing.sm)
-
             }
 
             if closable {
                 Button(action: { onClose?() }) {
-                    VdIcon("xmark", size: VdIconSize.xs, color: .vdContentNeutralOnBase)
+                    VdIcon("vd:xmark", size: VdIconSize.xs, color: .vdContentNeutralOnBase)
                         .frame(width: VdIconSize.md, height: VdIconSize.md)
                 }
                 .padding(VdSpacing.sm)
                 .buttonStyle(.plain)
-//                .background()
-
             }
         }
         .padding(VdSpacing.sm)
         .background(Color.vdBackgroundNeutralTertiary)
-        .clipShape(RoundedRectangle(cornerRadius: VdRadius.md))
+        .contentShape(RoundedRectangle(cornerRadius: VdRadius.md))
     }
 }
 
 // ─────────────────────────────────────────────────────────────
 // MARK: — VdSnackbarModifier
-// Presents the snackbar in an app-level overlay window pinned
-// to the bottom of the active scene, independent of the
-// triggering view's bounds. Auto-dismisses after `duration`
-// seconds unless closable.
 // ─────────────────────────────────────────────────────────────
 
 @MainActor
@@ -98,8 +90,8 @@ public struct VdSnackbarModifier: ViewModifier {
     private let onAction: (() -> Void)?
     private let leadingIcon: String?
     private let closable: Bool
-    private let duration: TimeInterval  // 0 = no auto-dismiss
-    @State private var dismissId: UInt = 0  // incremented on each show to invalidate stale timers
+    private let duration: TimeInterval
+    @State private var dismissId: UInt = 0
     @State private var presentationID = UUID()
 
     public init(
@@ -213,6 +205,10 @@ private struct VdSnackbarPresentationConfiguration {
     let onClose: (() -> Void)?
 }
 
+// ─────────────────────────────────────────────────────────────
+// MARK: — VdSnackbarPresenter
+// ─────────────────────────────────────────────────────────────
+
 @MainActor
 private enum VdSnackbarPresenter {
     private static let transition = Animation.spring(
@@ -243,6 +239,9 @@ private enum VdSnackbarPresenter {
         let model = VdSnackbarOverlayModel(configuration: configuration)
         model.bottomInset = bottomInset
         let window = makeWindow(for: scene)
+        model.onSnackbarFrameChange = { [weak window] frame in
+            (window as? VdPassThroughWindow)?.blockedFrame = frame
+        }
         let hostingController = UIHostingController(
             rootView: VdSnackbarOverlayView(model: model)
         )
@@ -271,7 +270,9 @@ private enum VdSnackbarPresenter {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + teardownDelay) {
             Task { @MainActor in
-                guard let currentEntry = entries[id], currentEntry.model.isVisible == false else { return }
+                guard let currentEntry = entries[id],
+                      currentEntry.model.isVisible == false else { return }
+                (currentEntry.window as? VdPassThroughWindow)?.blockedFrame = .null
                 currentEntry.window.isHidden = true
                 currentEntry.window.rootViewController = nil
                 entries.removeValue(forKey: id)
@@ -283,7 +284,9 @@ private enum VdSnackbarPresenter {
         UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }
             .first(where: { $0.activationState == .foregroundActive })
-        ?? UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first
+        ?? UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first
     }
 
     private static func makeWindow(for scene: UIWindowScene) -> UIWindow {
@@ -307,9 +310,7 @@ private enum VdSnackbarPresenter {
         let visibleWindows = scene.windows.filter {
             !$0.isHidden && $0.windowLevel == .normal
         }
-
-        return visibleWindows.first(where: \.isKeyWindow)
-            ?? visibleWindows.first
+        return visibleWindows.first(where: \.isKeyWindow) ?? visibleWindows.first
     }
 
     private static func reservedBottomHeight(in window: UIWindow) -> CGFloat {
@@ -323,7 +324,6 @@ private enum VdSnackbarPresenter {
         {
             let frameInWindow = view.convert(view.bounds, to: window)
             guard frameInWindow.maxY > window.bounds.maxY - 1 else { continue }
-
             let overlap = max(0, window.bounds.maxY - frameInWindow.minY)
             maxHeight = max(maxHeight, overlap)
         }
@@ -332,18 +332,16 @@ private enum VdSnackbarPresenter {
     }
 }
 
-private final class VdPassThroughWindow: UIWindow {
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        let hitView = super.hitTest(point, with: event)
-        return hitView === rootViewController?.view ? nil : hitView
-    }
-}
+// ─────────────────────────────────────────────────────────────
+// MARK: — Overlay Model & View
+// ─────────────────────────────────────────────────────────────
 
 @MainActor
 private final class VdSnackbarOverlayModel: ObservableObject {
     @Published var configuration: VdSnackbarPresentationConfiguration
     @Published var isVisible = false
     @Published var bottomInset: CGFloat = VdSpacing.xl
+    var onSnackbarFrameChange: ((CGRect) -> Void)?
 
     init(configuration: VdSnackbarPresentationConfiguration) {
         self.configuration = configuration
@@ -373,16 +371,69 @@ private struct VdSnackbarOverlayView: View {
                 )
                 .padding(.horizontal, VdSpacing.lg)
                 .padding(.bottom, model.bottomInset)
+                // ✅ onTapGesture before contentShape so the full
+                //    padded bounding box consumes taps, not just
+                //    the VdSnackbar pill itself.
+                .onTapGesture { }
                 .contentShape(Rectangle())
-                .onTapGesture {
-                    // Consume taps so they don't pass through to bottom bars.
-                }
+                .background(
+                    GeometryReader { proxy in
+                        Color.clear
+                            .preference(
+                                key: VdSnackbarFramePreferenceKey.self,
+                                value: proxy.frame(in: .named(VdSnackbarOverlayCoordinateSpace.name))
+                            )
+                    }
+                )
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
         .background(Color.clear)
         .ignoresSafeArea()
+        .coordinateSpace(name: VdSnackbarOverlayCoordinateSpace.name)
+        .onPreferenceChange(VdSnackbarFramePreferenceKey.self) { frame in
+            model.onSnackbarFrameChange?(frame)
+        }
+        .onChangeCompat(of: model.isVisible) { isVisible in
+            guard !isVisible else { return }
+            model.onSnackbarFrameChange?(.null)
+        }
+    }
+}
+
+private struct VdSnackbarFramePreferenceKey: PreferenceKey {
+    static var defaultValue: CGRect = .null
+
+    static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
+        value = nextValue()
+    }
+}
+
+private enum VdSnackbarOverlayCoordinateSpace {
+    static let name = "VdSnackbarOverlayCoordinateSpace"
+}
+
+// ─────────────────────────────────────────────────────────────
+// MARK: — VdPassThroughWindow
+// ─────────────────────────────────────────────────────────────
+
+private final class VdPassThroughWindow: UIWindow {
+    var blockedFrame: CGRect = .null
+
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        // If no snackbar is shown, pass all touches through.
+        guard !blockedFrame.isNull else { return nil }
+
+        let expandedBlockedFrame = blockedFrame.insetBy(dx: -2, dy: -2)
+
+        // ✅ Touches OUTSIDE the snackbar frame pass through to
+        //    whatever is beneath the overlay window.
+        guard expandedBlockedFrame.contains(point) else { return nil }
+
+        // ✅ Touches INSIDE the snackbar frame are handled by the
+        //    snackbar (buttons, close, tap-consume gesture).
+        return super.hitTest(point, with: event) ?? rootViewController?.view
     }
 }
 
@@ -464,8 +515,7 @@ extension View {
 
             previewSection("Full — icon + action + close") {
                 VdSnackbar(
-                    message:
-                        "Snackbar Content",
+                    message: "Snackbar Content",
                     action: "Action",
                     onAction: {},
                     leadingIcon: "square.grid.2x2",
@@ -505,26 +555,20 @@ private struct SnackbarInteractiveDemo: View {
             VdButton(
                 "Show basic snackbar",
                 style: .outlined,
-                action: {
-                    showBasic = true
-                }
+                action: { showBasic = true }
             )
             .frame(maxWidth: .infinity)
 
             VdButton(
                 "Show snackbar with action",
-                action: {
-                    showAction = true
-                }
+                action: { showAction = true }
             )
             .frame(maxWidth: .infinity)
 
             VdButton(
                 "Show snackbar with icon",
                 style: .subtle,
-                action: {
-                    showWithIcon = true
-                }
+                action: { showWithIcon = true }
             )
             .frame(maxWidth: .infinity)
         }
@@ -544,11 +588,10 @@ private struct SnackbarInteractiveDemo: View {
             closable: true
         )
         .vdSnackbar(
-           isPresented: $showWithIcon,
-           message: "File uploaded successfully",
-           leadingIcon: "checkmark.circle",
-           closable: true
-       )
-       
+            isPresented: $showWithIcon,
+            message: "File uploaded successfully",
+            leadingIcon: "checkmark.circle",
+            closable: true
+        )
     }
 }
