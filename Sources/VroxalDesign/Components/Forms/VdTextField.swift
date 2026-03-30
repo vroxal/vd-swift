@@ -89,14 +89,14 @@ public struct VdTextField: View {
         HStack(spacing: VdSpacing.xs) {
             Text(label)
                 .vdFont(VdFont.labelMedium)
-                .foregroundStyle(Color.vdContentDefaultSecondary)
+                .foregroundStyle(Color.labelTextColor)
 
             Spacer()
 
             if isOptional {
                 Text("Optional")
                     .vdFont(VdFont.bodyMediumItalic)
-                    .foregroundStyle(Color.vdContentDefaultSecondary)
+                    .foregroundStyle(Color.optionalTextColor)
             }
         }
     }

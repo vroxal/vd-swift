@@ -1,44 +1,6 @@
 // Components/Forms/VdCodeInput.swift — Vroxal Design
-// ─────────────────────────────────────────────────────────────
-// Figma source: node 318-36753
-//
-// A row of individual digit cells for OTP / verification codes.
-// Supports SMS autofill via .textContentType(.oneTimeCode).
-//
-// HOW IT WORKS
-//   A single hidden UITextField sits behind all the cells.
-//   It captures all keyboard input and SMS autofill.
-//   The visible cells are pure display — they render characters
-//   from the string, highlight the active position, and show
-//   a blinking cursor in the focused cell.
-//
-// CELL STATES → TOKEN MAPPING
-//   Default/Empty   bg=BackgroundDefaultSecondary  border=BorderDefaultSecondary  1pt
-//   Default/Filled  bg=BackgroundDefaultSecondary  border=BorderDefaultSecondary  1pt
-//   Focus (active)  bg=BackgroundDefaultSecondary  border=BorderPrimaryBase       2pt  + cursor
-//   Error/Empty     bg=BackgroundErrorSecondary    border=BorderErrorBase         1pt
-//   Error/Filled    bg=BackgroundErrorSecondary    border=BorderErrorBase         1pt
-//   Disabled/Empty  bg=BackgroundDefaultDisabled   border=BorderDefaultDisabled   1pt
-//   Disabled/Filled bg=BackgroundDefaultDisabled   border=BorderDefaultDisabled   1pt
-//
-// PROPS
-//   code           — Binding<String>: the current value (trimmed to length)
-//   length         — Int: number of cells, default 6 (4 and 6 shown in Figma)
-//   state          — VdCodeInputState: default · error · disabled
-//   onComplete     — closure fired when all cells are filled
-//
-// USAGE
-//   @State private var otp = ""
-//
-//   VdCodeInput(code: $otp, length: 6) {
-//       verifyCode(otp)
-//   }
-//
-//   VdCodeInput(code: $otp, length: 4, state: .error)
-// ─────────────────────────────────────────────────────────────
 
 import SwiftUI
-
 
 // ─────────────────────────────────────────────────────────────
 // MARK: — VdCodeInputState
@@ -85,7 +47,7 @@ public struct VdCodeInput: View {
             hiddenTextField
 
             // ── Visible cells ─────────────────────────────────
-            HStack(spacing: VdSpacing.xxs) {  // gap: 8pt
+            HStack(spacing: VdSpacing.xxs) {  
                 ForEach(0..<length, id: \.self) { index in
                     CodeCell(
                         character: character(at: index),

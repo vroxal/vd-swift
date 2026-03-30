@@ -172,7 +172,7 @@ public struct VdIconButton: View {
                     ProgressView()
                         .progressViewStyle(.circular)
                         .tint(resolvedIconColor(isPressed: false))
-                        .scaleEffect(size == .small ? 0.7 : 1.0)
+                        .frame(width: size.iconSize, height: size.iconSize)
                 } else {
                     VdIcon(
                         source: icon,
@@ -195,6 +195,7 @@ public struct VdIconButton: View {
                 backgroundColor: backgroundColor,
                 hoverBackgroundColor: hoverBackgroundColor,
                 borderColor: borderColor,
+                hoverBorderColor: hoverBorderColor,
                 iconColor: { isPressed in resolvedIconColor(isPressed: isPressed) },
                 showBorder: style == .outlined,
                 visualOpacity: visualOpacity
@@ -327,6 +328,7 @@ private struct VdIconButtonPressStyle: ButtonStyle {
     let backgroundColor: Color
     let hoverBackgroundColor: Color
     let borderColor: Color
+    let hoverBorderColor: Color
     let iconColor: (Bool) -> Color
     let showBorder: Bool
     let visualOpacity: Double
@@ -337,13 +339,11 @@ private struct VdIconButtonPressStyle: ButtonStyle {
             .background(
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .fill(isPressed ? hoverBackgroundColor : backgroundColor)
-                    .opacity(visualOpacity)
             )
             .overlay {
                 if showBorder {
                     RoundedRectangle(cornerRadius: cornerRadius)
-                        .strokeBorder(borderColor, lineWidth: VdBorderWidth.sm)
-                        .opacity(visualOpacity)
+                        .strokeBorder(isPressed ? hoverBorderColor : borderColor, lineWidth: VdBorderWidth.sm)
                 }
             }
             .foregroundStyle(iconColor(isPressed))

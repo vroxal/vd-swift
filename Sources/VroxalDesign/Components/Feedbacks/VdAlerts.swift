@@ -121,7 +121,7 @@ public struct VdAlert: View {
         let t = color.tokens
 
         HStack(alignment: .top, spacing: VdSpacing.sm) {
-            VdIcon(t.icon, size: VdIconSize.md, color: t.contentColor)
+            VdIcon(icon ?? t.icon, size: VdIconSize.md, color: t.contentColor)
             VStack(alignment: .leading, spacing: 0) {
                 if let title {
                     Text(title)
