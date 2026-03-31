@@ -167,12 +167,12 @@ public struct VdTextArea: View {
         }
         .overlay {
             if isFocused {
-                RoundedRectangle(cornerRadius: VdRadius.md + 3, style: .continuous)
+                RoundedRectangle(cornerRadius: VdRadius.md + 2, style: .continuous)
                     .strokeBorder(
                         Color.vdBorderPrimaryTertiary,
                         lineWidth: VdBorderWidth.md
                     )
-                    .padding(-3)
+                    .padding(-2)
             }
         }
         .frame(minHeight: minHeight, maxHeight: maxHeight)

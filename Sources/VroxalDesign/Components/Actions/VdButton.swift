@@ -29,9 +29,9 @@ public enum VdButtonStyle {
 }
 
 public enum VdButtonSize {
-    case small  // height 32pt  · py 4   · px 12 · icon container 16
-    case medium  // height 48pt  · py 12  · px 24 · icon container 24
-    case large  // height 56pt  · py 16  · px 24 · icon container 32
+    case small
+    case medium
+    case large
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -40,9 +40,10 @@ public enum VdButtonSize {
 
 private struct VdButtonTokens {
     let background: Color
-    let border: Color?  // nil = no border
+    let hoverBackground: Color
+    let border: Color?          // nil = no border
     let label: Color
-    let hoverBg: Color  // used on press (iOS "hover" equivalent)
+    let hoverLabel: Color       // label color on press
 }
 
 extension VdButtonColor {
@@ -56,44 +57,50 @@ extension VdButtonColor {
             case .primary:
                 return VdButtonTokens(
                     background: .vdBackgroundPrimaryBase,
+                    hoverBackground: .vdBackgroundPrimaryBaseHover,
                     border: nil,
                     label: .vdContentPrimaryOnBase,
-                    hoverBg: .vdBackgroundPrimaryBaseHover
+                    hoverLabel: .vdContentPrimaryOnBase
                 )
             case .neutral:
                 return VdButtonTokens(
                     background: .vdBackgroundNeutralBase,
+                    hoverBackground: .vdBackgroundNeutralBaseHover,
                     border: nil,
                     label: .vdContentNeutralOnBase,
-                    hoverBg: .vdBackgroundNeutralBaseHover
+                    hoverLabel: .vdContentNeutralOnBase
                 )
             case .error:
                 return VdButtonTokens(
                     background: .vdBackgroundErrorBase,
+                    hoverBackground: .vdBackgroundErrorBaseHover,
                     border: nil,
                     label: .vdContentErrorOnBase,
-                    hoverBg: .vdBackgroundErrorBaseHover
+                    hoverLabel: .vdContentErrorOnBase
                 )
             case .success:
                 return VdButtonTokens(
                     background: .vdBackgroundSuccessBase,
+                    hoverBackground: .vdBackgroundSuccessBaseHover,
                     border: nil,
                     label: .vdContentSuccessOnBase,
-                    hoverBg: .vdBackgroundSuccessBaseHover
+                    hoverLabel: .vdContentSuccessOnBase
                 )
             case .warning:
                 return VdButtonTokens(
                     background: .vdBackgroundWarningBase,
+                    hoverBackground: .vdBackgroundWarningBaseHover,
                     border: nil,
                     label: .vdContentWarningOnBase,
-                    hoverBg: .vdBackgroundWarningBaseHover
+                    hoverLabel: .vdContentWarningOnBase
                 )
             case .info:
                 return VdButtonTokens(
                     background: .vdBackgroundInfoBase,
+                    hoverBackground: .vdBackgroundInfoBaseHover,
                     border: nil,
                     label: .vdContentInfoOnBase,
-                    hoverBg: .vdBackgroundInfoBaseHover
+                    hoverLabel: .vdContentInfoOnBase
                 )
             }
 
@@ -102,44 +109,50 @@ extension VdButtonColor {
             case .primary:
                 return VdButtonTokens(
                     background: .vdBackgroundPrimarySecondary,
+                    hoverBackground: .vdBackgroundPrimarySecondaryHover,
                     border: nil,
                     label: .vdContentPrimaryOnSecondary,
-                    hoverBg: .vdBackgroundPrimarySecondaryHover
+                    hoverLabel: .vdContentPrimaryOnSecondary
                 )
             case .neutral:
                 return VdButtonTokens(
                     background: .vdBackgroundNeutralSecondary,
+                    hoverBackground: .vdBackgroundNeutralSecondaryHover,
                     border: nil,
                     label: .vdContentNeutralOnSecondary,
-                    hoverBg: .vdBackgroundNeutralSecondaryHover
+                    hoverLabel: .vdContentNeutralOnSecondary
                 )
             case .error:
                 return VdButtonTokens(
                     background: .vdBackgroundErrorSecondary,
+                    hoverBackground: .vdBackgroundErrorSecondaryHover,
                     border: nil,
                     label: .vdContentErrorOnSecondary,
-                    hoverBg: .vdBackgroundErrorSecondaryHover
+                    hoverLabel: .vdContentErrorOnSecondary
                 )
             case .success:
                 return VdButtonTokens(
                     background: .vdBackgroundSuccessSecondary,
+                    hoverBackground: .vdBackgroundSuccessSecondaryHover,
                     border: nil,
                     label: .vdContentSuccessOnSecondary,
-                    hoverBg: .vdBackgroundSuccessSecondaryHover
+                    hoverLabel: .vdContentSuccessOnSecondary
                 )
             case .warning:
                 return VdButtonTokens(
                     background: .vdBackgroundWarningSecondary,
+                    hoverBackground: .vdBackgroundWarningSecondaryHover,
                     border: nil,
                     label: .vdContentWarningOnSecondary,
-                    hoverBg: .vdBackgroundWarningSecondaryHover
+                    hoverLabel: .vdContentWarningOnSecondary
                 )
             case .info:
                 return VdButtonTokens(
                     background: .vdBackgroundInfoSecondary,
+                    hoverBackground: .vdBackgroundInfoSecondaryHover,
                     border: nil,
                     label: .vdContentInfoOnSecondary,
-                    hoverBg: .vdBackgroundInfoSecondaryHover
+                    hoverLabel: .vdContentInfoOnSecondary
                 )
             }
 
@@ -148,44 +161,50 @@ extension VdButtonColor {
             case .primary:
                 return VdButtonTokens(
                     background: .clear,
+                    hoverBackground: .vdBackgroundPrimarySecondary,
                     border: .vdBorderPrimaryBase,
                     label: .vdContentPrimaryBase,
-                    hoverBg: .vdBackgroundPrimarySecondary
+                    hoverLabel: .vdContentPrimaryOnSecondary
                 )
             case .neutral:
                 return VdButtonTokens(
                     background: .clear,
+                    hoverBackground: .vdBackgroundNeutralSecondary,
                     border: .vdBorderNeutralBase,
                     label: .vdContentNeutralBase,
-                    hoverBg: .vdBackgroundNeutralSecondary
+                    hoverLabel: .vdContentNeutralOnSecondary
                 )
             case .error:
                 return VdButtonTokens(
                     background: .clear,
+                    hoverBackground: .vdBackgroundErrorSecondary,
                     border: .vdBorderErrorBase,
                     label: .vdContentErrorBase,
-                    hoverBg: .vdBackgroundErrorSecondary
+                    hoverLabel: .vdContentErrorOnSecondary
                 )
             case .success:
                 return VdButtonTokens(
                     background: .clear,
+                    hoverBackground: .vdBackgroundSuccessSecondary,
                     border: .vdBorderSuccessBase,
                     label: .vdContentSuccessBase,
-                    hoverBg: .vdBackgroundSuccessSecondary
+                    hoverLabel: .vdContentSuccessOnSecondary
                 )
             case .warning:
                 return VdButtonTokens(
                     background: .clear,
+                    hoverBackground: .vdBackgroundWarningSecondary,
                     border: .vdBorderWarningBase,
                     label: .vdContentWarningBase,
-                    hoverBg: .vdBackgroundWarningSecondary
+                    hoverLabel: .vdContentWarningOnSecondary
                 )
             case .info:
                 return VdButtonTokens(
                     background: .clear,
+                    hoverBackground: .vdBackgroundInfoSecondary,
                     border: .vdBorderInfoBase,
                     label: .vdContentInfoBase,
-                    hoverBg: .vdBackgroundInfoSecondary
+                    hoverLabel: .vdContentInfoOnSecondary
                 )
             }
 
@@ -194,44 +213,50 @@ extension VdButtonColor {
             case .primary:
                 return VdButtonTokens(
                     background: .clear,
+                    hoverBackground: .vdBackgroundPrimarySecondary,
                     border: nil,
                     label: .vdContentPrimaryBase,
-                    hoverBg: .vdBackgroundPrimarySecondary
+                    hoverLabel: .vdContentPrimaryOnSecondary
                 )
             case .neutral:
                 return VdButtonTokens(
                     background: .clear,
+                    hoverBackground: .vdBackgroundNeutralSecondary,
                     border: nil,
                     label: .vdContentNeutralBase,
-                    hoverBg: .vdBackgroundNeutralSecondary
+                    hoverLabel: .vdContentNeutralOnSecondary
                 )
             case .error:
                 return VdButtonTokens(
                     background: .clear,
+                    hoverBackground: .vdBackgroundErrorSecondary,
                     border: nil,
                     label: .vdContentErrorBase,
-                    hoverBg: .vdBackgroundErrorSecondary
+                    hoverLabel: .vdContentErrorOnSecondary
                 )
             case .success:
                 return VdButtonTokens(
                     background: .clear,
+                    hoverBackground: .vdBackgroundSuccessSecondary,
                     border: nil,
                     label: .vdContentSuccessBase,
-                    hoverBg: .vdBackgroundSuccessSecondary
+                    hoverLabel: .vdContentSuccessOnSecondary
                 )
             case .warning:
                 return VdButtonTokens(
                     background: .clear,
+                    hoverBackground: .vdBackgroundWarningSecondary,
                     border: nil,
                     label: .vdContentWarningBase,
-                    hoverBg: .vdBackgroundWarningSecondary
+                    hoverLabel: .vdContentWarningOnSecondary
                 )
             case .info:
                 return VdButtonTokens(
                     background: .clear,
+                    hoverBackground: .vdBackgroundInfoSecondary,
                     border: nil,
                     label: .vdContentInfoBase,
-                    hoverBg: .vdBackgroundInfoSecondary
+                    hoverLabel: .vdContentInfoOnSecondary
                 )
             }
         }
@@ -246,25 +271,25 @@ extension VdButtonSize {
 
     fileprivate var verticalPadding: CGFloat {
         switch self {
-        case .small: return VdSpacing.sm  // 8pt
-        case .medium: return VdSpacing.smMd  // 12pt
-        case .large: return VdSpacing.smMd  // 12pt
+        case .small: return VdSpacing.sm
+        case .medium: return VdSpacing.smMd
+        case .large: return VdSpacing.smMd
         }
     }
 
     fileprivate var horizontalPadding: CGFloat {
         switch self {
-        case .small: return VdSpacing.md  // 16pt
-        case .medium: return VdSpacing.lg  // 24pt
-        case .large: return VdSpacing.xl  // 32pt
+        case .small: return VdSpacing.md
+        case .medium: return VdSpacing.lg
+        case .large: return VdSpacing.xl
         }
     }
 
     fileprivate var iconSize: CGFloat {
         switch self {
-        case .small: return VdIconSize.xs  // 16pt
-        case .medium: return VdIconSize.md  // 24pt
-        case .large: return VdIconSize.lg  // 32pt
+        case .small: return VdIconSize.xs
+        case .medium: return VdIconSize.md
+        case .large: return VdIconSize.lg
         }
     }
 
@@ -279,14 +304,14 @@ extension VdButtonSize {
     fileprivate var labelVerticalPadding: CGFloat {
         switch self {
         case .small, .medium: return 0
-        case .large: return VdSpacing.xs  // 4pt
+        case .large: return VdSpacing.xs
         }
     }
 
     fileprivate var defaultRadius: CGFloat {
         switch self {
-        case .small, .medium: return VdRadius.md  // 8pt
-        case .large: return VdRadius.lg  // 16pt
+        case .small, .medium: return VdRadius.md
+        case .large: return VdRadius.lg
         }
     }
 
@@ -349,7 +374,7 @@ public struct VdButton: View {
         Button(action: { if !isLoading { action() } }) {
             buttonContent
         }
-        .buttonStyle(VdButtonPressStyle(tokens: color.tokens(for: style)))
+        .buttonStyle(VdButtonPressStyle(tokens: color.tokens(for: style), cornerRadius: cornerRadius))
         .focused($isFocused)
         .disabled(!isEnabled || isLoading)
         .opacity(isEnabled ? 1.0 : 0.4)
@@ -374,18 +399,16 @@ public struct VdButton: View {
         return ZStack {
             HStack(spacing: VdSpacing.sm) {
                 if let icon = leftIcon {
-                    VdIcon(icon, size: size.iconSize, color: tokens.label)
+                    VdIcon(icon, size: size.iconSize)
                 }
 
                 Text(label)
                     .vdFont(size.labelStyle)
-                    .foregroundStyle(tokens.label)
                     .lineLimit(1)
                     .padding(.vertical, size.labelVerticalPadding)
 
                 if let icon = rightIcon {
-                    VdIcon(icon, size: size.iconSize, color: tokens.label)
-
+                    VdIcon(icon, size: size.iconSize)
                 }
             }
             .opacity(isLoading ? 0 : 1)
@@ -399,16 +422,6 @@ public struct VdButton: View {
         .padding(.horizontal, size.horizontalPadding)
         .padding(.vertical, size.verticalPadding)
         .frame(maxWidth: fullWidth ? .infinity : nil)
-        .background(tokens.background)
-        .clipShape(
-            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-        )
-        .overlay {
-            if let borderColor = tokens.border {
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .strokeBorder(borderColor, lineWidth: VdBorderWidth.sm)
-            }
-        }
     }
 
     private var cornerRadius: CGFloat {
@@ -422,11 +435,24 @@ public struct VdButton: View {
 
 private struct VdButtonPressStyle: ButtonStyle {
     let tokens: VdButtonTokens
+    let cornerRadius: CGFloat
 
     func makeBody(configuration: Configuration) -> some View {
+        let pressed = configuration.isPressed
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
-            .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+            .foregroundStyle(pressed ? tokens.hoverLabel : tokens.label)
+            .background(
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .fill(pressed ? tokens.hoverBackground : tokens.background)
+            )
+            .overlay {
+                if let borderColor = tokens.border {
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                        .strokeBorder(borderColor, lineWidth: VdBorderWidth.sm)
+                }
+            }
+            .scaleEffect(pressed ? 0.97 : 1.0)
+            .animation(.easeOut(duration: 0.1), value: pressed)
     }
 }
 

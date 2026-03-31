@@ -97,11 +97,11 @@ public struct VdRadioButton: View {
                     .frame(width: 12, height: 12)
             }
 
-            // ── Focus ring (2pt, inset -3pt) ──────────────
+            // ── Focus ring (2pt, inset -2pt) ──────────────
             if isFocused {
                 Circle()
                     .strokeBorder(Color.vdBorderPrimaryTertiary, lineWidth: VdBorderWidth.md)
-                    .padding(-3)
+                    .padding(-2)
             }
         }
         .frame(width: 20, height: 20)       // Scale.Icon.Size.sm = 20pt

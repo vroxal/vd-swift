@@ -82,16 +82,17 @@ public struct VdSearchField: View {
         .overlay {
             if isFocused && state != .disabled {
                 RoundedRectangle(
-                    cornerRadius: VdRadius.md + 3,
+                    cornerRadius: VdRadius.md + 2,
                     style: .continuous
                 )
                 .strokeBorder(
                     Color.vdBorderPrimaryTertiary,
                     lineWidth: VdBorderWidth.md
                 )
-                .padding(-3)
+                .padding(-2)
             }
         }
+        .vdInstallKeyboardDismissOnTap()
         .onAppear {
             guard previewForceFocused, state != .disabled else { return }
             DispatchQueue.main.async {

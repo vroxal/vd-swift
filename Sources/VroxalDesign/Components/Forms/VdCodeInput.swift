@@ -47,7 +47,7 @@ public struct VdCodeInput: View {
             hiddenTextField
 
             // ── Visible cells ─────────────────────────────────
-            HStack(spacing: VdSpacing.xxs) {  
+            HStack(spacing: VdSpacing.sm) {
                 ForEach(0..<length, id: \.self) { index in
                     CodeCell(
                         character: character(at: index),
@@ -160,7 +160,7 @@ private struct CodeCell: View {
                     Color.vdBorderPrimaryTertiary,
                     lineWidth: VdBorderWidth.md
                 )
-                .padding(-3)
+                .padding(-2)
             }
 
             // ── Character or cursor ───────────────────────────

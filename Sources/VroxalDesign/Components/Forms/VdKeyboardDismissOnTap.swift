@@ -5,9 +5,25 @@ import UIKit
 internal enum VdKeyboardDismissOnTapInstaller {
 
     private static let recognizerName = "com.vroxaldesign.keyboardDismissTap"
-    private static var handlers: [ObjectIdentifier: TapHandler] = [:]
+
+    // Holds a weak window reference so entries for destroyed windows are
+    // pruned automatically on the next installIfNeeded() call — no scene
+    // lifecycle observers required.
+    private final class Entry {
+        weak var window: UIWindow?
+        let handler: TapHandler
+        init(window: UIWindow, handler: TapHandler) {
+            self.window = window
+            self.handler = handler
+        }
+    }
+
+    private static var entries: [ObjectIdentifier: Entry] = [:]
 
     static func installIfNeeded() {
+        // Prune stale entries for windows that have been deallocated.
+        entries = entries.filter { $0.value.window != nil }
+
         let windowScenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
 
         for scene in windowScenes {
@@ -17,7 +33,7 @@ internal enum VdKeyboardDismissOnTapInstaller {
                 }
 
                 let handler = TapHandler()
-                handlers[ObjectIdentifier(window)] = handler
+                entries[ObjectIdentifier(window)] = Entry(window: window, handler: handler)
 
                 let recognizer = UITapGestureRecognizer(target: handler, action: #selector(TapHandler.handleTap(_:)))
                 recognizer.name = recognizerName

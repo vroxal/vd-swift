@@ -23,8 +23,8 @@
 //   Transparent  no bg/border             icon=ContentBase
 //
 //   Press → BaseHover / SecondaryHover equivalents
-//   Focus → focus ring BorderPrimaryTertiary 2pt outset 3pt
-//   Disabled → BackgroundDefaultDisabled + ContentDefaultDisabled
+//   Focus → focus ring BorderPrimaryTertiary 2pt outset 2pt
+//   Disabled → opacity 0.4 applied to whole button (style colors preserved)
 //   Loading → spinner replaces icon, same background
 //
 // USAGE
@@ -183,9 +183,9 @@ public struct VdIconButton: View {
             .padding(size.padding)
             .overlay {
                 if isFocused {
-                    RoundedRectangle(cornerRadius: cornerRadius + 3)
+                    RoundedRectangle(cornerRadius: cornerRadius + 2)
                         .strokeBorder(Color.vdBorderPrimaryTertiary, lineWidth: VdBorderWidth.md)
-                        .padding(-3)
+                        .padding(-2)
                 }
             }
         }
@@ -227,9 +227,6 @@ public struct VdIconButton: View {
     // ─────────────────────────────────────────────────────────
 
     private var backgroundColor: Color {
-        if !isEnabled {
-            return style == .transparent ? .clear : .vdBackgroundDefaultDisabled
-        }
         switch style {
         case .solid:
             switch color {
@@ -247,9 +244,6 @@ public struct VdIconButton: View {
     }
 
     private var hoverBackgroundColor: Color {
-        if !isEnabled {
-            return style == .transparent ? .clear : .vdBackgroundDefaultDisabled
-        }
         switch style {
         case .solid:
             switch color {
@@ -279,7 +273,6 @@ public struct VdIconButton: View {
     // ─────────────────────────────────────────────────────────
 
     private var borderColor: Color {
-        if !isEnabled { return .vdBorderDefaultDisabled }
         switch color {
         case .primary: return .vdBorderPrimaryBase
         case .neutral: return .vdBorderNeutralBase
@@ -287,7 +280,6 @@ public struct VdIconButton: View {
     }
 
     private var hoverBorderColor: Color {
-        if !isEnabled { return .vdBorderDefaultDisabled }
         switch color {
         case .primary: return .vdBorderPrimarySecondary
         case .neutral: return .vdBorderNeutralSecondary
@@ -299,7 +291,6 @@ public struct VdIconButton: View {
     // ─────────────────────────────────────────────────────────
 
     private func resolvedIconColor(isPressed: Bool) -> Color {
-        if !isEnabled { return .vdContentDefaultDisabled }
         switch style {
         case .solid:
             switch color {

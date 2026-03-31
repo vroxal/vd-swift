@@ -8,6 +8,9 @@ import SwiftUI
 
 public enum VdSelectFieldState {
     case `default`
+    /// Manually-managed focus state. SwiftUI's `Menu` does not expose
+    /// open/focus events, so the caller is responsible for setting this
+    /// state. It will NOT update automatically when the menu opens.
     case focus
     case disabled
     case error
@@ -186,12 +189,12 @@ public struct VdSelectField<T: Hashable>: View {
         }
         .overlay {
             if state == .focus {
-                RoundedRectangle(cornerRadius: VdRadius.md + 3)
+                RoundedRectangle(cornerRadius: VdRadius.md + 2)
                     .strokeBorder(
                         Color.vdBorderPrimaryTertiary,
                         lineWidth: VdBorderWidth.md
                     )
-                    .padding(-3)
+                    .padding(-2)
             }
         }
     }
@@ -204,11 +207,11 @@ public struct VdSelectField<T: Hashable>: View {
     private var statusIcon: some View {
         switch state {
         case .error:
-            VdIcon("exclamationmark.circle.fill", size: VdIconSize.md, color: .vdContentErrorBase)
+            VdIcon("vd:danger-circle-filled", size: VdIconSize.md, color: .vdContentErrorBase)
         case .success:
-            VdIcon("checkmark.circle.fill", size: VdIconSize.md, color: .vdContentSuccessBase)
+            VdIcon("vd:check-circle-filled", size: VdIconSize.md, color: .vdContentSuccessBase)
         case .warning:
-            VdIcon("exclamationmark.triangle.fill", size: VdIconSize.md, color: .vdContentWarningBase)
+            VdIcon("vd:danger-triangle-filled", size: VdIconSize.md, color: .vdContentWarningBase)
         default:
             EmptyView()
         }
@@ -269,8 +272,8 @@ public struct VdSelectField<T: Hashable>: View {
     }
 
     private var placeholderColor: Color {
-        state == .disabled
-            ? .vdContentDefaultDisabled : .vdContentDefaultDisabled
+        // Placeholder is always shown in the disabled token across all states.
+        .vdContentDefaultDisabled
     }
 
     private var leadingIconColor: Color {

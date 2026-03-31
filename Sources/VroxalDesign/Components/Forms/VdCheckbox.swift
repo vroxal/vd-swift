@@ -80,11 +80,11 @@ public struct VdCheckbox: View {
             
             }
 
-            // ── Focus ring (2pt, inset -3pt) ─────────────────
+            // ── Focus ring (2pt, inset -2pt) ─────────────────
             if isFocused {
-                RoundedRectangle(cornerRadius: VdRadius.xs + 3)
+                RoundedRectangle(cornerRadius: VdRadius.xs + 2)
                     .strokeBorder(Color.vdBorderPrimaryTertiary, lineWidth: VdBorderWidth.md)
-                    .padding(-3)
+                    .padding(-2)
             }
         }
         .frame(width: 20, height: 20)           // Scale.Icon.Size.sm = 20pt

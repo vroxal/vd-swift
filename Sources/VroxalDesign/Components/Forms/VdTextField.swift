@@ -89,14 +89,14 @@ public struct VdTextField: View {
         HStack(spacing: VdSpacing.xs) {
             Text(label)
                 .vdFont(VdFont.labelMedium)
-                .foregroundStyle(Color.labelTextColor)
+                .foregroundStyle(labelTextColor)
 
             Spacer()
 
             if isOptional {
                 Text("Optional")
                     .vdFont(VdFont.bodyMediumItalic)
-                    .foregroundStyle(Color.optionalTextColor)
+                    .foregroundStyle(optionalTextColor)
             }
         }
     }
@@ -180,14 +180,14 @@ public struct VdTextField: View {
         .overlay {
             if isFocused && state != .disabled {
                 RoundedRectangle(
-                    cornerRadius: VdRadius.md + 3,
+                    cornerRadius: VdRadius.md + 2,
                     style: .continuous
                 )
                 .strokeBorder(
                     Color.vdBorderPrimaryTertiary,
                     lineWidth: VdBorderWidth.md
                 )
-                .padding(-3)
+                .padding(-2)
             }
         }
     }

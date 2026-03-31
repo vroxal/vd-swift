@@ -54,32 +54,32 @@ private extension VdBadgeColor {
             switch self {
             case .primary: return VdBadgeTokens(
                 background: .vdBackgroundPrimaryBase,
-                border:     nil,
+                border:     .vdBorderPrimaryBase,
                 text:       .vdContentPrimaryOnBase
             )
             case .success: return VdBadgeTokens(
                 background: .vdBackgroundSuccessBase,
-                border:     nil,
+                border:     .vdBorderSuccessBase,
                 text:       .vdContentSuccessOnBase
             )
             case .error: return VdBadgeTokens(
                 background: .vdBackgroundErrorBase,
-                border:     nil,
+                border:     .vdBorderErrorBase,
                 text:       .vdContentErrorOnBase
             )
             case .warning: return VdBadgeTokens(
                 background: .vdBackgroundWarningBase,
-                border:     nil,
+                border:     .vdBorderWarningBase,
                 text:       .vdContentWarningOnBase
             )
             case .info: return VdBadgeTokens(
                 background: .vdBackgroundInfoBase,
-                border:     nil,
+                border:     .vdBorderInfoBase,
                 text:       .vdContentInfoOnBase
             )
             case .neutral: return VdBadgeTokens(
                 background: .vdBackgroundNeutralBase,
-                border:     nil,
+                border:     .vdBorderNeutralBase,
                 text:       .vdContentNeutralOnBase
             )
             }
@@ -164,7 +164,7 @@ public struct VdBadge: View {
 
     // Scale.Border.Radius.sm = 8pt (square) / .full = 120pt (pill)
     private var cornerRadius: CGFloat {
-        rounded ? VdRadius.full : VdRadius.xs
+        rounded ? VdRadius.full : VdRadius.sm
     }
 
     // ─────────────────────────────────────────────────────────

@@ -85,9 +85,9 @@ public struct VdSelectionCard: View {
             }
             .overlay {
                 if isFocused {
-                    RoundedRectangle(cornerRadius: VdRadius.sm + 3)
+                    RoundedRectangle(cornerRadius: VdRadius.sm + 2)
                         .strokeBorder(Color.vdBorderPrimaryTertiary, lineWidth: VdBorderWidth.md)
-                        .padding(-3)
+                        .padding(-2)
                 }
             }
         }

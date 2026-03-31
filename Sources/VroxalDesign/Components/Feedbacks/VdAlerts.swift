@@ -130,7 +130,7 @@ public struct VdAlert: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 Text(description)
-                    .vdFont(VdFont.bodyMedium)
+                    .vdFont(VdFont.labelMedium)
                     .foregroundStyle(Color.vdContentDefaultBase)
                     .frame(maxWidth: .infinity, alignment: .leading)
 

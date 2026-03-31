@@ -37,43 +37,39 @@ public struct VdSnackbar: View {
     // ─────────────────────────────────────────────────────────
 
     public var body: some View {
-        HStack(alignment: .top, spacing: 0) {
+        HStack(alignment: .center, spacing: VdSpacing.xs) {
 
             if let icon = leadingIcon {
                 VdIcon(icon, size: VdIconSize.md, color: .vdContentNeutralOnBase)
-                    .padding(VdSpacing.sm)
             }
 
             // ── Message ───────────────────────────────────────
             Text(message)
                 .vdFont(VdFont.bodyMedium)
                 .foregroundStyle(Color.vdContentNeutralOnBase)
-                .frame(maxWidth: .infinity, minHeight: 24, alignment: .leading)
-                .padding(VdSpacing.sm)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
             if let label = action {
                 Button(action: { onAction?() }) {
                     Text(label)
                         .vdFont(VdFont.labelMedium)
                         .foregroundStyle(Color.vdContentPrimaryBaseInverted)
-                        .frame(minHeight: 24)
                 }
                 .buttonStyle(.plain)
-                .padding(VdSpacing.sm)
             }
 
             if closable {
                 Button(action: { onClose?() }) {
                     VdIcon("vd:xmark", size: VdIconSize.xs, color: .vdContentNeutralOnBase)
-                        .frame(width: VdIconSize.md, height: VdIconSize.md)
                 }
-                .padding(VdSpacing.sm)
                 .buttonStyle(.plain)
             }
         }
-        .padding(VdSpacing.sm)
+        .padding(.horizontal, VdSpacing.smMd)
+        .padding(.vertical, VdSpacing.sm)
         .background(Color.vdBackgroundNeutralTertiary)
-        .contentShape(RoundedRectangle(cornerRadius: VdRadius.md))
+        .clipShape(RoundedRectangle(cornerRadius: VdRadius.md, style: .continuous))
+        .contentShape(RoundedRectangle(cornerRadius: VdRadius.md, style: .continuous))
     }
 }
 
@@ -115,6 +111,7 @@ public struct VdSnackbarModifier: ViewModifier {
     public func body(content: Content) -> some View {
         content
             .onAppear {
+                guard isPresented else { return }
                 syncPresentation()
             }
             .onChangeCompat(of: isPresented) { _ in
@@ -173,18 +170,17 @@ public struct VdSnackbarModifier: ViewModifier {
         let currentId = dismissId
         DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
             guard currentId == dismissId else { return }
-            Task { @MainActor in
-                dismiss()
-            }
+            dismiss()
         }
     }
 
     @MainActor
     private func dismiss() {
+        // Setting isPresented = false triggers onChangeCompat → syncPresentation()
+        // which calls VdSnackbarPresenter.dismiss. No need to call it directly here.
         withAnimation {
             isPresented = false
         }
-        VdSnackbarPresenter.dismiss(id: presentationID)
     }
 }
 
@@ -269,14 +265,12 @@ private enum VdSnackbarPresenter {
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + teardownDelay) {
-            Task { @MainActor in
-                guard let currentEntry = entries[id],
-                      currentEntry.model.isVisible == false else { return }
-                (currentEntry.window as? VdPassThroughWindow)?.blockedFrame = .null
-                currentEntry.window.isHidden = true
-                currentEntry.window.rootViewController = nil
-                entries.removeValue(forKey: id)
-            }
+            guard let currentEntry = entries[id],
+                  currentEntry.model.isVisible == false else { return }
+            (currentEntry.window as? VdPassThroughWindow)?.blockedFrame = .null
+            currentEntry.window.isHidden = true
+            currentEntry.window.rootViewController = nil
+            entries.removeValue(forKey: id)
         }
     }
 
