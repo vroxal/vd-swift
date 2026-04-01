@@ -87,13 +87,13 @@ public struct VdSelectField<T: Hashable>: View {
         HStack(spacing: VdSpacing.xs) {
             if let text = label {
                 Text(text)
-                    .vdFont(VdFont.labelMedium)
+                    .vdFont(.labelMedium)
                     .foregroundStyle(labelColor)
             }
             if isOptional {
                 Spacer(minLength: 0)
                 Text("Optional")
-                    .vdFont(VdFont.bodyMediumItalic)
+                    .vdFont(.bodyMediumItalic)
                     .foregroundStyle(optionalColor)
             } else {
                 Spacer(minLength: 0)
@@ -223,7 +223,7 @@ public struct VdSelectField<T: Hashable>: View {
 
     private func helperRow(text: String) -> some View {
         Text(text)
-            .vdFont(VdFont.bodySmall)
+            .vdFont(.bodySmall)
             .foregroundStyle(helperColor)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -446,7 +446,7 @@ private func previewSection<Content: View>(
 ) -> some View {
     VStack(alignment: .leading, spacing: VdSpacing.sm) {
         Text(title)
-            .vdFont(VdFont.labelSmall)
+            .vdFont(.labelSmall)
             .foregroundStyle(Color.vdContentDefaultTertiary)
         content()
     }

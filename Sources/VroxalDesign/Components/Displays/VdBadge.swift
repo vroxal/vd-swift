@@ -173,7 +173,7 @@ public struct VdBadge: View {
         let tokens = color.tokens(for: style)
 
         Text(label)
-            .vdFont(VdFont.labelSmall)
+            .vdFont(.labelSmall)
             .foregroundStyle(tokens.text)
             .lineLimit(1)
             .padding(.horizontal, horizontalPadding)
@@ -289,7 +289,7 @@ private func badgeSection<Content: View>(
 ) -> some View {
     VStack(alignment: .leading, spacing: VdSpacing.sm) {
         Text(title)
-            .vdFont(VdFont.labelSmall)
+            .vdFont(.labelSmall)
             .foregroundStyle(Color.vdContentDefaultTertiary)
         FlowLayout(spacing: VdSpacing.xs) {
             content()

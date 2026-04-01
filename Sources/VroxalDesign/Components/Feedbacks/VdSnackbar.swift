@@ -45,14 +45,14 @@ public struct VdSnackbar: View {
 
             // ── Message ───────────────────────────────────────
             Text(message)
-                .vdFont(VdFont.bodyMedium)
+                .vdFont(.bodyMedium)
                 .foregroundStyle(Color.vdContentNeutralOnBase)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             if let label = action {
                 Button(action: { onAction?() }) {
                     Text(label)
-                        .vdFont(VdFont.labelMedium)
+                        .vdFont(.labelMedium)
                         .foregroundStyle(Color.vdContentPrimaryBaseInverted)
                 }
                 .buttonStyle(.plain)
@@ -533,7 +533,7 @@ private func previewSection<Content: View>(
 ) -> some View {
     VStack(alignment: .leading, spacing: VdSpacing.sm) {
         Text(title)
-            .vdFont(VdFont.labelSmall)
+            .vdFont(.labelSmall)
             .foregroundStyle(Color.vdContentDefaultTertiary)
         content()
     }

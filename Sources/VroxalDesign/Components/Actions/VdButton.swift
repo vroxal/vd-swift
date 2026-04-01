@@ -295,8 +295,8 @@ extension VdButtonSize {
 
     fileprivate var labelStyle: VdTextStyle {
         switch self {
-        case .small: return VdFont.labelSmall
-        case .medium: return VdFont.labelMedium
+        case .small: return .labelSmall
+        case .medium: return .labelMedium
         case .large: return .labelLarge
         }
     }
@@ -714,7 +714,7 @@ private func previewSection<Content: View>(
 ) -> some View {
     VStack(alignment: .leading, spacing: VdSpacing.sm) {
         Text(title)
-            .vdFont(VdFont.labelSmall)
+            .vdFont(.labelSmall)
             .foregroundStyle(Color.vdContentDefaultTertiary)
         content()
     }

@@ -60,13 +60,13 @@ public struct VdSelectionCard: View {
                 // ── Title + description ───────────────────────
                 VStack(alignment: .leading, spacing: 0) {
                     Text(title)
-                        .vdFont(VdFont.labelMedium)
+                        .vdFont(.labelMedium)
                         .foregroundStyle(titleColor)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     if let desc = description {
                         Text(desc)
-                            .vdFont(VdFont.bodySmall)
+                            .vdFont(.bodyMedium)
                             .foregroundStyle(descriptionColor)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -85,7 +85,7 @@ public struct VdSelectionCard: View {
             }
             .overlay {
                 if isFocused {
-                    RoundedRectangle(cornerRadius: VdRadius.sm + 2)
+                    RoundedRectangle(cornerRadius: VdRadius.md + 2)
                         .strokeBorder(Color.vdBorderPrimaryTertiary, lineWidth: VdBorderWidth.md)
                         .padding(-2)
                 }
@@ -402,7 +402,7 @@ private func previewSection<Content: View>(
 ) -> some View {
     VStack(alignment: .leading, spacing: VdSpacing.sm) {
         Text(title)
-            .vdFont(VdFont.labelSmall)
+            .vdFont(.labelSmall)
             .foregroundStyle(Color.vdContentDefaultTertiary)
         content()
     }

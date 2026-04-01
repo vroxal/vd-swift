@@ -350,7 +350,7 @@ private func previewSection<Content: View>(
 ) -> some View {
     VStack(alignment: .leading, spacing: VdSpacing.sm) {
         Text(title)
-            .vdFont(VdFont.labelSmall)
+            .vdFont(.labelSmall)
             .foregroundStyle(Color.vdContentDefaultTertiary)
         content()
     }
@@ -373,7 +373,7 @@ private struct InteractiveCodeInputDemo: View {
 
             if isError {
                 Text("Incorrect code. Please try again.")
-                    .vdFont(VdFont.bodySmall)
+                    .vdFont(.bodySmall)
                     .foregroundStyle(Color.vdContentErrorBase)
             }
 

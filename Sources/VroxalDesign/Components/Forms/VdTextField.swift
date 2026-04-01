@@ -88,14 +88,14 @@ public struct VdTextField: View {
     private var labelRow: some View {
         HStack(spacing: VdSpacing.xs) {
             Text(label)
-                .vdFont(VdFont.labelMedium)
+                .vdFont(.labelMedium)
                 .foregroundStyle(labelTextColor)
 
             Spacer()
 
             if isOptional {
                 Text("Optional")
-                    .vdFont(VdFont.bodyMediumItalic)
+                    .vdFont(.bodyMediumItalic)
                     .foregroundStyle(optionalTextColor)
             }
         }
@@ -202,13 +202,13 @@ public struct VdTextField: View {
             HStack(alignment: .top, spacing: VdSpacing.xs) {
                 if let helper = helperText {
                     Text(helper)
-                        .vdFont(VdFont.bodySmall)
+                        .vdFont(.bodySmall)
                         .foregroundStyle(helperTextColor)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 if let limit = characterLimit {
                     Text("\(text.count)/\(limit)")
-                        .vdFont(VdFont.bodySmall)
+                        .vdFont(.bodySmall)
                         .foregroundStyle(Color.vdContentDefaultSecondary)
                         .fixedSize()
                 }
@@ -367,7 +367,7 @@ public struct VdTextField: View {
 
 private func previewLabel(_ text: String) -> some View {
     Text(text)
-        .vdFont(VdFont.labelSmall)
+        .vdFont(.labelSmall)
         .foregroundStyle(Color.vdContentDefaultTertiary)
 }
 

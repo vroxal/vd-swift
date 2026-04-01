@@ -120,7 +120,7 @@ public struct VdLoadingState: View {
     // ─────────────────────────────────────────────────────────
 
     private var content: some View {
-        VStack(spacing: VdSpacing.xl) {         // 24pt gap (scale/spacing/600)
+        VStack(spacing: VdSpacing.lg) {         // 24pt gap (scale/spacing/600)
 
             // ── Spinner ───────────────────────────────────────
             ProgressView()
@@ -131,14 +131,14 @@ public struct VdLoadingState: View {
                 VStack(spacing: VdSpacing.xs) { // 4pt gap (scale/spacing/100)
                     if let t = title {
                         Text(t)
-                            .vdFont(VdFont.titleLarge)
+                            .vdFont(.titleLarge)
                             .foregroundStyle(Color.vdContentDefaultBase)
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity)
                     }
                     if let d = description {
                         Text(d)
-                            .vdFont(VdFont.bodyMedium)
+                            .vdFont(.bodyMedium)
                             .foregroundStyle(Color.vdContentDefaultSecondary)
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity)
@@ -309,7 +309,7 @@ private func previewSection<Content: View>(
 ) -> some View {
     VStack(alignment: .leading, spacing: VdSpacing.sm) {
         Text(title)
-            .vdFont(VdFont.labelSmall)
+            .vdFont(.labelSmall)
             .foregroundStyle(Color.vdContentDefaultTertiary)
         content()
     }
@@ -322,7 +322,7 @@ private struct OverlayDemo: View {
         ZStack {
             VStack(spacing: VdSpacing.md) {
                 Text("Tap the button to show the overlay loading state.")
-                    .vdFont(VdFont.bodyMedium)
+                    .vdFont(.bodyMedium)
                     .foregroundStyle(Color.vdContentDefaultSecondary)
                     .multilineTextAlignment(.center)
                 VdButton("Show overlay", action: {
@@ -390,11 +390,11 @@ private struct SkeletonToggleDemo: View {
 
                 VStack(alignment: .leading, spacing: VdSpacing.xs) {
                     Text("Ada Lovelace")
-                        .vdFont(VdFont.labelMedium)
+                        .vdFont(.labelMedium)
                         .foregroundStyle(Color.vdContentDefaultBase)
                         .vdSkeleton(isLoading)
                     Text("ada@example.com")
-                        .vdFont(VdFont.bodySmall)
+                        .vdFont(.bodySmall)
                         .foregroundStyle(Color.vdContentDefaultSecondary)
                         .vdSkeleton(isLoading)
                 }

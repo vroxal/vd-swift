@@ -100,12 +100,12 @@ public struct VdCheckbox: View {
         VStack(alignment: .leading, spacing: 0) {
             if let text = label {
                 Text(text)
-                    .vdFont(VdFont.labelMedium)
+                    .vdFont(.labelMedium)
                     .foregroundStyle(labelColor)
             }
             if let desc = description {
                 Text(desc)
-                    .vdFont(VdFont.bodySmall)
+                    .vdFont(.bodyMedium)
                     .foregroundStyle(descriptionColor)
             }
         }
@@ -227,7 +227,7 @@ private func previewSection<Content: View>(
 ) -> some View {
     VStack(alignment: .leading, spacing: VdSpacing.sm) {
         Text(title)
-            .vdFont(VdFont.labelSmall)
+            .vdFont(.labelSmall)
             .foregroundStyle(Color.vdContentDefaultTertiary)
         content()
     }

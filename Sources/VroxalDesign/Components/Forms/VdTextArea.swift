@@ -80,13 +80,13 @@ public struct VdTextArea: View {
         HStack(spacing: VdSpacing.xs) {
             if let labelText = label {
                 Text(labelText)
-                    .vdFont(VdFont.labelMedium)
+                    .vdFont(.labelMedium)
                     .foregroundStyle(labelColor)             // ← was missing in original
             }
             Spacer(minLength: 0)
             if isOptional {
                 Text("Optional")
-                    .vdFont(VdFont.bodyMediumItalic)         // ← matches TextField (.bodyMediumItalic)
+                    .vdFont(.bodyMediumItalic)         // ← matches TextField (.bodyMediumItalic)
                     .foregroundStyle(optionalColor)
             }
         }
@@ -109,7 +109,7 @@ public struct VdTextArea: View {
             ZStack(alignment: .topLeading) {
                     if text.isEmpty {
                         Text(placeholder)
-                            .vdFont(VdFont.bodyMedium)
+                            .vdFont(.bodyMedium)
                             .foregroundStyle(Color.vdContentDefaultDisabled)
                             .allowsHitTesting(false)
                     }
@@ -197,7 +197,7 @@ public struct VdTextArea: View {
         HStack(alignment: .top, spacing: VdSpacing.xs) {
             if let helper = helperText {
                 Text(helper)
-                    .vdFont(VdFont.bodySmall)
+                    .vdFont(.bodySmall)
                     .foregroundStyle(helperColor)
                     .frame(maxWidth: .infinity, alignment: .leading)
             } else {
@@ -206,7 +206,7 @@ public struct VdTextArea: View {
 
             if let limit = characterLimit {
                 Text("\(text.count)/\(limit)")
-                    .vdFont(VdFont.bodySmall)
+                    .vdFont(.bodySmall)
                     .foregroundStyle(Color.vdContentDefaultSecondary) // ← matches TextField counter colour
                     .fixedSize()
             }
@@ -400,7 +400,7 @@ private func previewSection<Content: View>(
 ) -> some View {
     VStack(alignment: .leading, spacing: VdSpacing.sm) {
         Text(title)
-            .vdFont(VdFont.labelSmall)
+            .vdFont(.labelSmall)
             .foregroundStyle(Color.vdContentDefaultTertiary)
         content()
     }

@@ -125,12 +125,12 @@ public struct VdAlert: View {
             VStack(alignment: .leading, spacing: 0) {
                 if let title {
                     Text(title)
-                        .vdFont(VdFont.titleMedium)
+                        .vdFont(.titleMedium)
                         .foregroundStyle(t.contentColor)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 Text(description)
-                    .vdFont(VdFont.labelMedium)
+                    .vdFont(.labelMedium)
                     .foregroundStyle(Color.vdContentDefaultBase)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
