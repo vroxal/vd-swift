@@ -155,7 +155,7 @@ extension Color {
     static let _vdGrey50  = Color(vdHex: "#f6f5ff")
     static let _vdGrey100 = Color(vdHex: "#e7e6f5")
     static let _vdGrey200 = Color(vdHex: "#d7d5e5")
-    static let _vdGrey300 = Color(vdHex: "#9f9cba")
+    static let _vdGrey300 = Color(vdHex: "#A7A4BD")
     static let _vdGrey400 = Color(vdHex: "#797791")
     static let _vdGrey500 = Color(vdHex: "#5a5870")
     static let _vdGrey600 = Color(vdHex: "#48465c")

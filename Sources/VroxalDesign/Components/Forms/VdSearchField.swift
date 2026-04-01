@@ -6,7 +6,7 @@ public struct VdSearchField: View {
     @Binding private var text: String
 
     private let placeholder: String
-    private let state: VdInputState
+    private let isDisabled: Bool
     private let showsClearAction: Bool
     private let onClear: (() -> Void)?
     private let previewForceFocused: Bool
@@ -16,14 +16,14 @@ public struct VdSearchField: View {
     public init(
         text: Binding<String>,
         placeholder: String = "Placeholder",
-        state: VdInputState = .default,
+        isDisabled: Bool = false,
         showsClearAction: Bool = true,
         onClear: (() -> Void)? = nil
     ) {
         self.init(
             text: text,
             placeholder: placeholder,
-            state: state,
+            isDisabled: isDisabled,
             showsClearAction: showsClearAction,
             onClear: onClear,
             previewForceFocused: false
@@ -33,14 +33,14 @@ public struct VdSearchField: View {
     init(
         text: Binding<String>,
         placeholder: String,
-        state: VdInputState,
+        isDisabled: Bool,
         showsClearAction: Bool,
         onClear: (() -> Void)?,
         previewForceFocused: Bool
     ) {
         self._text = text
         self.placeholder = placeholder
-        self.state = state
+        self.isDisabled = isDisabled
         self.showsClearAction = showsClearAction
         self.onClear = onClear
         self.previewForceFocused = previewForceFocused
@@ -49,13 +49,13 @@ public struct VdSearchField: View {
     fileprivate init(
         text: Binding<String>,
         placeholder: String = "Placeholder",
-        state: VdInputState = .default,
+        isDisabled: Bool = false,
         previewForceFocused: Bool
     ) {
         self.init(
             text: text,
             placeholder: placeholder,
-            state: state,
+            isDisabled: isDisabled,
             showsClearAction: true,
             onClear: nil,
             previewForceFocused: previewForceFocused
@@ -66,7 +66,6 @@ public struct VdSearchField: View {
         HStack(spacing: VdSpacing.sm) {
             leadingIcon
             inputField
-            statusIcon
             clearAction
         }
         .padding(.horizontal, VdSpacing.smMd)
@@ -80,7 +79,7 @@ public struct VdSearchField: View {
                 .strokeBorder(containerBorderColor, lineWidth: VdBorderWidth.sm)
         }
         .overlay {
-            if isFocused && state != .disabled {
+            if isFocused && !isDisabled {
                 RoundedRectangle(
                     cornerRadius: VdRadius.md + 2,
                     style: .continuous
@@ -94,7 +93,7 @@ public struct VdSearchField: View {
         }
         .vdInstallKeyboardDismissOnTap()
         .onAppear {
-            guard previewForceFocused, state != .disabled else { return }
+            guard previewForceFocused, !isDisabled else { return }
             DispatchQueue.main.async {
                 isFocused = true
             }
@@ -116,18 +115,11 @@ public struct VdSearchField: View {
         .frame(maxWidth: .infinity, minHeight: 24, alignment: .leading)
         .lineLimit(1)
         .truncationMode(.tail)
-        .foregroundStyle(valueTextColor)
+        .foregroundStyle(isDisabled ? Color.vdContentDefaultDisabled : Color.vdContentDefaultBase)
         .focused($isFocused)
-        .disabled(state == .disabled)
+        .disabled(isDisabled)
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled()
-    }
-
-    @ViewBuilder
-    private var statusIcon: some View {
-        if let iconName = statusIconName {
-            VdIcon(iconName, size: VdIconSize.md, color: statusIconColor)
-        }
     }
 
     @ViewBuilder
@@ -138,7 +130,7 @@ public struct VdSearchField: View {
                 color: .neutral,
                 style: .transparent,
                 size: .small,
-                isDisabled: state == .disabled,
+                isDisabled: isDisabled,
                 action: clear
             )
         }
@@ -152,68 +144,18 @@ public struct VdSearchField: View {
         }
     }
 
-
     private var containerBackground: Color {
-        switch state {
-        case .disabled:
-            return .vdBackgroundDefaultDisabled
-        case .error:
-            return .vdBackgroundErrorSecondary
-        case .default, .success, .warning:
-            return .vdBackgroundDefaultSecondary
-        }
+        isDisabled ? .vdBackgroundDefaultDisabled : .vdBackgroundDefaultSecondary
     }
 
     private var containerBorderColor: Color {
-        if isFocused && state != .disabled {
-            return .vdBorderDefaultBase
-        }
-        switch state {
-        case .disabled:
-            return .vdBorderDefaultDisabled
-        case .error:
-            return .vdBorderErrorBase
-        case .default, .success, .warning:
-            return .vdBorderDefaultSecondary
-        }
-    }
-
-    private var valueTextColor: Color {
-        state == .disabled ? .vdContentDefaultDisabled : .vdContentDefaultBase
+        if isDisabled { return .vdBorderDefaultDisabled }
+        if isFocused  { return .vdBorderDefaultBase }
+        return .vdBorderDefaultSecondary
     }
 
     private var leadingIconColor: Color {
-        state == .disabled ? .vdContentDefaultDisabled : .vdContentNeutralBase
-    }
-
-    private var clearIconColor: Color {
-        state == .disabled ? .vdContentDefaultDisabled : .vdContentNeutralBase
-    }
-
-    private var statusIconName: String? {
-        switch state {
-        case .error:
-            return "vd:danger-circle-filled"
-        case .success:
-            return "vd:check-circle-filled"
-        case .warning:
-            return "vd:danger-triangle-filled"
-        case .default, .disabled:
-            return nil
-        }
-    }
-
-    private var statusIconColor: Color {
-        switch state {
-        case .error:
-            return .vdContentErrorBase
-        case .success:
-            return .vdContentSuccessBase
-        case .warning:
-            return .vdContentWarningBase
-        case .default, .disabled:
-            return .clear
-        }
+        isDisabled ? .vdContentDefaultDisabled : .vdContentNeutralBase
     }
 }
 
@@ -221,84 +163,39 @@ public struct VdSearchField: View {
     ScrollView {
         VStack(alignment: .leading, spacing: VdSpacing.xl) {
             previewSection("Default") {
-                     VdSearchField(
-                        text: .constant(""),
-                        placeholder: "Placeholder"
-                    )
-                    VdSearchField(
-                        text: .constant("Input Value"),
-                        placeholder: "Placeholder"
-                    )
-                
-            }
-
-            previewSection("Focus") {
-                     VdSearchField(
-                        text: .constant(""),
-                        placeholder: "Placeholder",
-                        previewForceFocused: true
-                    )
-                     VdSearchField(
-                        text: .constant("Input Value"),
-                        placeholder: "Placeholder",
-                        previewForceFocused: true
-                    )
-                
-            }
-
-            previewSection("Disabled") {
-                     VdSearchField(
-                        text: .constant(""),
-                        placeholder: "Placeholder",
-                        state: .disabled
-                    )
-                     VdSearchField(
-                        text: .constant("Input Value"),
-                        placeholder: "Placeholder",
-                        state: .disabled
-                
+                VdSearchField(
+                    text: .constant(""),
+                    placeholder: "Placeholder"
+                )
+                VdSearchField(
+                    text: .constant("Input Value"),
+                    placeholder: "Placeholder"
                 )
             }
 
-            previewSection("Error") {
-                     VdSearchField(
-                        text: .constant(""),
-                        placeholder: "Placeholder",
-                        state: .error
-                    )
-                     VdSearchField(
-                        text: .constant("Input Value"),
-                        placeholder: "Placeholder",
-                        state: .error
-                    )
-                
-            }
-
-            previewSection("Success") {
-                     VdSearchField(
-                        text: .constant(""),
-                        placeholder: "Placeholder",
-                        state: .success
-                    )
-                     VdSearchField(
-                        text: .constant("Input Value"),
-                        placeholder: "Placeholder",
-                        state: .success
-                    )
-                
-            }
-
-            previewSection("Warning") {
-                     VdSearchField(
-                        text: .constant(""),
-                        placeholder: "Placeholder",
-                        state: .warning
-                    )
+            previewSection("Focus") {
                 VdSearchField(
-                        text: .constant("Input Value"),
-                        placeholder: "Placeholder",
-                        state: .warning
-                    
+                    text: .constant(""),
+                    placeholder: "Placeholder",
+                    previewForceFocused: true
+                )
+                VdSearchField(
+                    text: .constant("Input Value"),
+                    placeholder: "Placeholder",
+                    previewForceFocused: true
+                )
+            }
+
+            previewSection("Disabled") {
+                VdSearchField(
+                    text: .constant(""),
+                    placeholder: "Placeholder",
+                    isDisabled: true
+                )
+                VdSearchField(
+                    text: .constant("Input Value"),
+                    placeholder: "Placeholder",
+                    isDisabled: true
                 )
             }
 
@@ -324,7 +221,6 @@ private func previewSection<Content: View>(
     }
 }
 
-
 private struct InteractiveSearchFieldDemo: View {
     @State private var query = ""
 
@@ -333,6 +229,5 @@ private struct InteractiveSearchFieldDemo: View {
             text: $query,
             placeholder: "Search"
         )
-        .frame(width: .infinity)
     }
 }

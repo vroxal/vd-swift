@@ -176,11 +176,8 @@ public struct VdSnackbarModifier: ViewModifier {
 
     @MainActor
     private func dismiss() {
-        // Setting isPresented = false triggers onChangeCompat → syncPresentation()
-        // which calls VdSnackbarPresenter.dismiss. No need to call it directly here.
-        withAnimation {
-            isPresented = false
-        }
+        isPresented = false
+        VdSnackbarPresenter.dismiss(id: presentationID)
     }
 }
 
@@ -226,6 +223,7 @@ private enum VdSnackbarPresenter {
             entry.window.isHidden = false
             entry.model.configuration = configuration
             entry.model.bottomInset = bottomInset
+            (entry.window as? VdPassThroughWindow)?.isShowingSnackbar = true
             withAnimation(transition) {
                 entry.model.isVisible = true
             }
@@ -246,6 +244,7 @@ private enum VdSnackbarPresenter {
         window.windowScene = scene
         window.rootViewController = hostingController
         window.isHidden = false
+        (window as? VdPassThroughWindow)?.isShowingSnackbar = true
 
         entries[id] = VdSnackbarPresentationEntry(window: window, model: model)
 
@@ -259,6 +258,10 @@ private enum VdSnackbarPresenter {
 
     static func dismiss(id: UUID) {
         guard let entry = entries[id] else { return }
+
+        // Clear immediately so hitTest stops intercepting touches
+        // the moment dismissal begins, not after the exit animation.
+        (entry.window as? VdPassThroughWindow)?.isShowingSnackbar = false
 
         withAnimation(transition) {
             entry.model.isVisible = false
@@ -414,19 +417,22 @@ private enum VdSnackbarOverlayCoordinateSpace {
 
 private final class VdPassThroughWindow: UIWindow {
     var blockedFrame: CGRect = .null
+    /// Set synchronously when a snackbar begins presenting; cleared
+    /// immediately when dismissal starts — before the exit animation.
+    /// Avoids the async gap where `blockedFrame` is still `.null` but
+    /// the overlay window is already on screen.
+    var isShowingSnackbar: Bool = false
 
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        // If no snackbar is shown, pass all touches through.
-        guard !blockedFrame.isNull else { return nil }
+        // Primary gate: if no snackbar is being shown at all, pass through.
+        guard isShowingSnackbar else { return nil }
 
-        let expandedBlockedFrame = blockedFrame.insetBy(dx: -2, dy: -2)
+        // Secondary gate: once the frame is known, only intercept touches
+        // that land within the snackbar pill (+ 2pt slop).
+        if !blockedFrame.isNull {
+            guard blockedFrame.insetBy(dx: -2, dy: -2).contains(point) else { return nil }
+        }
 
-        // ✅ Touches OUTSIDE the snackbar frame pass through to
-        //    whatever is beneath the overlay window.
-        guard expandedBlockedFrame.contains(point) else { return nil }
-
-        // ✅ Touches INSIDE the snackbar frame are handled by the
-        //    snackbar (buttons, close, tap-consume gesture).
         return super.hitTest(point, with: event) ?? rootViewController?.view
     }
 }
