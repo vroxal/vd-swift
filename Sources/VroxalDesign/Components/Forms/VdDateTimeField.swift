@@ -158,55 +158,61 @@ public struct VdDateTimeField: View {
     // ─────────────────────────────────────────────────────────
     // MARK: Input container
     // ─────────────────────────────────────────────────────────
+    // Structure is intentionally identical to VdTextField so both
+    // fields render at exactly the same height. Avoid wrapping in
+    // Button — SwiftUI's internal _ButtonLabel wrapper can measure
+    // the label slightly shorter than a bare HStack. Use
+    // .contentShape + .onTapGesture instead.
+    // ─────────────────────────────────────────────────────────
 
     private var inputContainer: some View {
-        Button {
-            tempDate = selection ?? Date()
-            isPickerPresented = true
-        } label: {
-            HStack(spacing: VdSpacing.sm) {
+        HStack(spacing: VdSpacing.sm) {
 
-                // Leading icon
-                if let icon = leadingIcon {
-                    VdIcon(icon, size: VdIconSize.md, color: leadingIconColor)
-                }
+            // Leading icon
+            if let icon = leadingIcon {
+                VdIcon(icon, size: VdIconSize.md, color: leadingIconColor)
+            }
 
-                // Value text — styled identically to VdTextField's text field
-                Group {
-                    if let date = selection {
-                        Text(formattedDate(date))
-                            .foregroundStyle(valueColor)
-                    } else {
-                        Text(placeholder)
-                            .foregroundStyle(Color.vdContentDefaultDisabled)
-                    }
-                }
-                .vdFont(.bodyMedium)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .frame(minHeight: 22)
-                .padding(.vertical, VdSpacing.smMd)
-
-                // Status icon (error / success / warning)
-                if let statusIcon = statusIconName {
-                    VdIcon(statusIcon, size: VdIconSize.md, color: statusIconColor)
+            // Value text — mirrors VdTextField's Group { TextField } block exactly
+            Group {
+                if let date = selection {
+                    Text(formattedDate(date))
+                        .foregroundStyle(valueColor)
+                } else {
+                    Text(placeholder)
+                        .foregroundStyle(Color.vdContentDefaultDisabled)
                 }
             }
-            .padding(.horizontal, VdSpacing.smMd)
-            .background(containerBackground)
-            .clipShape(RoundedRectangle(cornerRadius: VdRadius.md, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: VdRadius.md, style: .continuous)
-                    .strokeBorder(containerBorderColor, lineWidth: VdBorderWidth.sm)
-            }
-            .overlay {
-                if isPickerPresented {
-                    RoundedRectangle(cornerRadius: VdRadius.md + 2, style: .continuous)
-                        .strokeBorder(Color.vdBorderPrimaryTertiary, lineWidth: VdBorderWidth.md)
-                        .padding(-2)
-                }
+            .vdFont(.bodyMedium)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(minHeight: 22)
+            .padding(.vertical, VdSpacing.smMd)
+
+            // Status icon (error / success / warning)
+            if let statusIcon = statusIconName {
+                VdIcon(statusIcon, size: VdIconSize.md, color: statusIconColor)
             }
         }
-        .buttonStyle(.plain)
+        .padding(.horizontal, VdSpacing.smMd)
+        .background(containerBackground)
+        .clipShape(RoundedRectangle(cornerRadius: VdRadius.md, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: VdRadius.md, style: .continuous)
+                .strokeBorder(containerBorderColor, lineWidth: VdBorderWidth.sm)
+        }
+        .overlay {
+            if isPickerPresented {
+                RoundedRectangle(cornerRadius: VdRadius.md + 2, style: .continuous)
+                    .strokeBorder(Color.vdBorderPrimaryTertiary, lineWidth: VdBorderWidth.md)
+                    .padding(-2)
+            }
+        }
+        // Full-surface tap target — same behaviour as tapping a text field
+        .contentShape(Rectangle())
+        .onTapGesture {
+            tempDate = selection ?? Date()
+            isPickerPresented = true
+        }
     }
 
     // ─────────────────────────────────────────────────────────
@@ -414,7 +420,6 @@ private struct DateTimePickerSheet: View {
         }
         .presentationDetents(sheetDetents)
         .presentationDragIndicator(.hidden)
-        .background(.white)
         }
 
     private var sheetTitle: String {
