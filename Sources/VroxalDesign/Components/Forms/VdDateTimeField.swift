@@ -1,14 +1,13 @@
 // Components/Forms/VdDateTimeField.swift — Vroxal Design
 // ─────────────────────────────────────────────────────────────
-// A styled date/time input matching VdTextField visuals.
-// Uses the native compact DatePicker (.datePickerStyle(.compact))
-// which renders as a tappable chip that opens the system
-// calendar / clock popover inline — no sheet required.
+// A styled date/time input that looks exactly like VdTextField.
+// Tapping the container opens a bottom sheet with a native
+// DatePicker; confirming with "Done" commits the value.
 //
 // STATES → TOKEN MAPPING
 //   Default   bg=BackgroundDefaultSecondary  border=BorderDefaultSecondary  1pt
-//   Focus     bg=BackgroundDefaultSecondary  border=BorderDefaultBase       1pt
-//             + focus ring BorderPrimaryTertiary 2pt outset 3pt
+//   Focus*    bg=BackgroundDefaultSecondary  border=BorderDefaultBase       1pt
+//             + focus ring BorderPrimaryTertiary 2pt outset 2pt
 //   Disabled  bg=BackgroundDefaultDisabled   border=BorderDefaultDisabled   1pt
 //             label=ContentDefaultDisabled   helper=ContentDefaultDisabled
 //   Error     bg=BackgroundErrorSecondary    border=BorderErrorBase         1pt
@@ -21,23 +20,17 @@
 //             helper=ContentWarningBase
 //             + exclamationmark.triangle.fill trailing
 //
-// HOW THE COMPACT PICKER WORKS
-//   DatePicker with .datePickerStyle(.compact) renders a native
-//   tappable label. Tapping it opens a calendar popover (date) or
-//   a drum-roll popover (time) inline — iOS handles focus/dismiss.
-//   We stretch the picker to fill the entire HStack row via
-//   .frame(maxWidth: .infinity) + .clipped() and tint the label
-//   text to match design tokens.
+//   *Focus = sheet is open
 //
 // LAYOUT
 //   [Label ──────────────────── Optional]
-//   [LeadingIcon  <DatePicker chip>  StatusIcon]  ← 48pt tall field
+//   [LeadingIcon  <formatted value / placeholder>  StatusIcon]  ← same as VdTextField
 //   [Helper text]
 //
 // PROPS
 //   label          — field label above the input
 //   selection      — Binding<Date?> (nil = no value selected yet)
-//   placeholder    — text shown in the chip when selection is nil
+//   placeholder    — text shown when selection is nil
 //   state          — VdInputState: default · disabled · error · success · warning
 //   isOptional     — Bool: shows "Optional" tag right of label
 //   leadingIcon    — icon token for leading slot (sf:/vd:)
@@ -45,21 +38,7 @@
 //   mode           — VdDateTimeFieldMode: .date · .time · .dateTime
 //   minimumDate    — optional lower bound for the picker
 //   maximumDate    — optional upper bound for the picker
-//   onChange       — closure fired whenever selection changes
-//
-// USAGE
-//   @State private var dob: Date? = nil
-//
-//   VdDateTimeField("Date of birth", selection: $dob,
-//       placeholder: "Select date",
-//       mode: .date,
-//       helperText: "Must be 18+")
-//
-//   VdDateTimeField("Meeting time", selection: $meetingDate,
-//       state: .error,
-//       mode: .dateTime,
-//       helperText: "Please choose a future time",
-//       minimumDate: Date())
+//   onChange       — closure fired when a date is confirmed via Done
 // ─────────────────────────────────────────────────────────────
 
 import SwiftUI
@@ -101,9 +80,9 @@ public struct VdDateTimeField: View {
 
     @Binding private var selection: Date?
 
-    // Internal non-optional proxy required by DatePicker.
-    // Defaults to "now" so the picker always opens at a sensible date.
-    @State private var internalDate: Date = Date()
+    @State private var isPickerPresented: Bool = false
+    // Temp value edited inside the sheet — committed only on Done
+    @State private var tempDate: Date = Date()
 
     public init(
         _ label:     String,
@@ -129,8 +108,6 @@ public struct VdDateTimeField: View {
         self.minimumDate = minimumDate
         self.maximumDate = maximumDate
         self.onChange    = onChange
-        // Seed internalDate from the existing selection if present
-        self._internalDate = State(initialValue: selection.wrappedValue ?? Date())
     }
 
     // ─────────────────────────────────────────────────────────
@@ -143,16 +120,19 @@ public struct VdDateTimeField: View {
             inputContainer
             if let helper = helperText { helperRow(text: helper) }
         }
-        // Keep internalDate in sync whenever selection is set externally
-        .onChange(of: selection) { newValue in
-            if let d = newValue { internalDate = d }
-        }
-        // Propagate picker changes back to the optional binding
-        .onChange(of: internalDate) { newValue in
-            selection = newValue
-            onChange?(newValue)
-        }
         .disabled(state == .disabled)
+        .sheet(isPresented: $isPickerPresented) {
+            DateTimePickerSheet(
+                tempDate:    $tempDate,
+                mode:        mode,
+                pickerRange: pickerRange,
+                onConfirm: { confirmed in
+                    selection = confirmed
+                    onChange?(confirmed)
+                },
+                onCancel: {}
+            )
+        }
     }
 
     // ─────────────────────────────────────────────────────────
@@ -165,7 +145,7 @@ public struct VdDateTimeField: View {
                 .vdFont(.labelMedium)
                 .foregroundStyle(labelTextColor)
 
-            Spacer(minLength: 0)
+            Spacer()
 
             if isOptional {
                 Text("Optional")
@@ -180,62 +160,53 @@ public struct VdDateTimeField: View {
     // ─────────────────────────────────────────────────────────
 
     private var inputContainer: some View {
-        HStack(spacing: VdSpacing.sm) {
+        Button {
+            tempDate = selection ?? Date()
+            isPickerPresented = true
+        } label: {
+            HStack(spacing: VdSpacing.sm) {
 
-            // Leading icon
-            if let icon = leadingIcon {
-                VdIcon(icon, size: VdIconSize.md, color: leadingIconColor)
-            }
-
-            // ── Compact DatePicker ─────────────────────────────
-            // The compact style renders a single tappable date/time
-            // label. When tapped, iOS presents a calendar or time
-            // popover inline above/below the field.
-            // We overlay a transparent placeholder Text when no date
-            // is selected yet so the field shows placeholder copy.
-            ZStack(alignment: .leading) {
-                // Placeholder — visible only when selection is nil
-                if selection == nil {
-                    Text(placeholder)
-                        .vdFont(.bodyMedium)
-                        .foregroundStyle(Color.vdContentDefaultDisabled)
-                        .allowsHitTesting(false)   // let taps fall through to DatePicker
+                // Leading icon
+                if let icon = leadingIcon {
+                    VdIcon(icon, size: VdIconSize.md, color: leadingIconColor)
                 }
 
-                DatePicker(
-                    "",
-                    selection: $internalDate,
-                    in: pickerRange,
-                    displayedComponents: mode.displayedComponents
-                )
-                .datePickerStyle(.compact)
-                .labelsHidden()
-                .tint(valueColor)
-                .opacity(selection == nil ? 0 : 1)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    if selection == nil {
-                        selection = internalDate
+                // Value text — styled identically to VdTextField's text field
+                Group {
+                    if let date = selection {
+                        Text(formattedDate(date))
+                            .foregroundStyle(valueColor)
+                    } else {
+                        Text(placeholder)
+                            .foregroundStyle(Color.vdContentDefaultDisabled)
                     }
                 }
-            }
-            .frame(maxWidth: .infinity)
+                .vdFont(.bodyMedium)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(minHeight: 22)
+                .padding(.vertical, VdSpacing.smMd)
 
-            // Status icon (error / success / warning)
-            if let statusIcon = statusIconName {
-                VdIcon(statusIcon, size: VdIconSize.md, color: statusIconColor)
+                // Status icon (error / success / warning)
+                if let statusIcon = statusIconName {
+                    VdIcon(statusIcon, size: VdIconSize.md, color: statusIconColor)
+                }
+            }
+            .padding(.horizontal, VdSpacing.smMd)
+            .background(containerBackground)
+            .clipShape(RoundedRectangle(cornerRadius: VdRadius.md, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: VdRadius.md, style: .continuous)
+                    .strokeBorder(containerBorderColor, lineWidth: VdBorderWidth.sm)
+            }
+            .overlay {
+                if isPickerPresented {
+                    RoundedRectangle(cornerRadius: VdRadius.md + 2, style: .continuous)
+                        .strokeBorder(Color.vdBorderPrimaryTertiary, lineWidth: VdBorderWidth.md)
+                        .padding(-2)
+                }
             }
         }
-        .padding(.horizontal, VdSpacing.smMd)
-        .padding(.vertical, VdSpacing.smMd)
-        .frame(minHeight: 48)
-        .background(containerBackground)
-        .clipShape(RoundedRectangle(cornerRadius: VdRadius.sm))
-        .overlay {
-            RoundedRectangle(cornerRadius: VdRadius.sm)
-                .strokeBorder(containerBorderColor, lineWidth: VdBorderWidth.sm)
-        }
+        .buttonStyle(.plain)
     }
 
     // ─────────────────────────────────────────────────────────
@@ -247,6 +218,18 @@ public struct VdDateTimeField: View {
             .vdFont(.bodySmall)
             .foregroundStyle(helperTextColor)
             .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // MARK: Date formatting
+    // ─────────────────────────────────────────────────────────
+
+    private func formattedDate(_ date: Date) -> String {
+        switch mode {
+        case .date:     return date.formatted(date: .abbreviated, time: .omitted)
+        case .time:     return date.formatted(date: .omitted,     time: .shortened)
+        case .dateTime: return date.formatted(date: .abbreviated, time: .shortened)
+        }
     }
 
     // ─────────────────────────────────────────────────────────
@@ -272,6 +255,7 @@ public struct VdDateTimeField: View {
     }
 
     private var containerBorderColor: Color {
+        if isPickerPresented { return .vdBorderDefaultBase }
         switch state {
         case .default, .success, .warning: return .vdBorderDefaultSecondary
         case .disabled:                    return .vdBorderDefaultDisabled
@@ -333,6 +317,124 @@ public struct VdDateTimeField: View {
 }
 
 // ─────────────────────────────────────────────────────────────
+// MARK: — DateTimePickerSheet
+// ─────────────────────────────────────────────────────────────
+
+private struct DateTimePickerSheet: View {
+
+    @Binding var tempDate: Date
+    let mode:        VdDateTimeFieldMode
+    let pickerRange: ClosedRange<Date>
+    let onConfirm:   (Date) -> Void
+    let onCancel:    () -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var initialDate: Date?
+
+    private var hasChanged: Bool {
+        guard let initialDate else { return false }
+        return !Calendar.current.isDate(tempDate, equalTo: initialDate, toGranularity: .second)
+    }
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                // ── Native picker ─────────────────────────────────
+                if mode == .time {
+                    DatePicker(
+                        "",
+                        selection: $tempDate,
+                        in: pickerRange,
+                        displayedComponents: mode.displayedComponents
+                    )
+                    .datePickerStyle(.wheel)
+                    .labelsHidden()
+                    .tint(Color.vdContentPrimaryBase)
+                    .padding(VdSpacing.md)
+                } else {
+                    DatePicker(
+                        "",
+                        selection: $tempDate,
+                        in: pickerRange,
+                        displayedComponents: mode.displayedComponents
+                    )
+                    .datePickerStyle(.graphical)
+                    .labelsHidden()
+                    .tint(Color.vdContentPrimaryBase)
+                    .padding(VdSpacing.md)
+                }
+
+                Spacer(minLength: 0)
+
+                // ── Full-width Done button ────────────────────────
+                VdButton("Done", size: .medium, fullWidth: true) {
+                    onConfirm(tempDate)
+                    dismiss()
+                }
+                .padding(.horizontal, VdSpacing.lg)
+                .padding(.bottom, VdSpacing.lg)
+                .padding(.top, VdSpacing.sm)
+            }
+            .navigationTitle(sheetTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+//                    Text("Hello")
+                    Button {
+                        onCancel()
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(Color.vdContentDefaultSecondary)
+//                            .frame(width: 40, height: 40)
+//
+                            .contentShape(Circle())
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    
+                    }
+                ToolbarItem(placement: .confirmationAction) {
+                    if hasChanged{
+                        Button("Reset") {
+                            if let initialDate {
+                                tempDate = initialDate
+                            }
+                        }
+                        //                    .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(Color.vdContentDefaultSecondary)
+                        .disabled(!hasChanged)
+                        .animation(.easeInOut(duration: 0.2), value: hasChanged)
+                    }
+                }
+            }
+        }
+        .onAppear {
+            initialDate = tempDate
+        }
+        .presentationDetents(sheetDetents)
+        .presentationDragIndicator(.hidden)
+        .background(.white)
+        }
+
+    private var sheetTitle: String {
+        switch mode {
+        case .date:     return "Select Date"
+        case .time:     return "Select Time"
+        case .dateTime: return "Select Date & Time"
+        }
+    }
+
+    private var sheetDetents: Set<PresentationDetent> {
+        switch mode {
+        case .time:     return [.height(360)]
+        case .date:     return [.height(520)]
+        case .dateTime: return [.height(560)]
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
 // MARK: — Preview
 // ─────────────────────────────────────────────────────────────
 
@@ -347,7 +449,7 @@ public struct VdDateTimeField: View {
                     placeholder: "Placeholder",
                     isOptional: true,
                     leadingIcon: "square.grid.2x2",
-                    helperText: "Help or instruction text goes here"
+                    helperText: "Tap to open the date & time picker"
                 )
             }
 
@@ -394,7 +496,7 @@ public struct VdDateTimeField: View {
                     state: .disabled,
                     isOptional: true,
                     leadingIcon: "square.grid.2x2",
-                    helperText: "Help or instruction text goes here"
+                    helperText: "Not available right now"
                 )
             }
 
@@ -406,7 +508,7 @@ public struct VdDateTimeField: View {
                     state: .error,
                     isOptional: true,
                     leadingIcon: "square.grid.2x2",
-                    helperText: "Help or instruction text goes here"
+                    helperText: "Please select a valid date"
                 )
             }
 
@@ -418,7 +520,7 @@ public struct VdDateTimeField: View {
                     state: .success,
                     isOptional: true,
                     leadingIcon: "square.grid.2x2",
-                    helperText: "Help or instruction text goes here"
+                    helperText: "Date confirmed"
                 )
             }
 
@@ -430,7 +532,7 @@ public struct VdDateTimeField: View {
                     state: .warning,
                     isOptional: true,
                     leadingIcon: "square.grid.2x2",
-                    helperText: "Help or instruction text goes here"
+                    helperText: "Selected date is in the past"
                 )
             }
 
@@ -456,23 +558,52 @@ private func previewSection<Content: View>(
 }
 
 private struct DateTimeFieldInteractiveDemo: View {
-    @State private var selectedDate: Date? = nil
+    @State private var date:     Date? = nil
+    @State private var dateOnly: Date? = nil
+    @State private var timeOnly: Date? = nil
 
     var body: some View {
         VStack(spacing: VdSpacing.md) {
             VdDateTimeField(
-                "Schedule",
-                selection: $selectedDate,
-                placeholder: "Pick date & time",
-                leadingIcon: "calendar",
-                helperText: "Tap the date chip to open the picker"
+                "Date & Time",
+                selection: $date,
+                placeholder: "Select date & time",
+                leadingIcon: "calendar.badge.clock",
+                helperText: "Tap to pick",
+                mode: .dateTime
             )
 
-            if let selectedDate {
-                Text("Selected: \(selectedDate.formatted(date: .abbreviated, time: .shortened))")
-                    .vdFont(.bodySmall)
-                    .foregroundStyle(Color.vdContentDefaultSecondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+            VdDateTimeField(
+                "Date",
+                selection: $dateOnly,
+                placeholder: "Select date",
+                leadingIcon: "calendar",
+                mode: .date
+            )
+
+            VdDateTimeField(
+                "Time",
+                selection: $timeOnly,
+                placeholder: "Select time",
+                leadingIcon: "clock",
+                mode: .time
+            )
+
+            if date != nil || dateOnly != nil || timeOnly != nil {
+                VStack(alignment: .leading, spacing: VdSpacing.xs) {
+                    if let d = date {
+                        Text("Date & Time: \(d.formatted(date: .abbreviated, time: .shortened))")
+                    }
+                    if let d = dateOnly {
+                        Text("Date: \(d.formatted(date: .abbreviated, time: .omitted))")
+                    }
+                    if let t = timeOnly {
+                        Text("Time: \(t.formatted(date: .omitted, time: .shortened))")
+                    }
+                }
+                .vdFont(.bodySmall)
+                .foregroundStyle(Color.vdContentDefaultSecondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
         .padding(VdSpacing.md)
@@ -480,3 +611,17 @@ private struct DateTimeFieldInteractiveDemo: View {
         .clipShape(RoundedRectangle(cornerRadius: VdRadius.lg))
     }
 }
+// MARK: - iOS 16.4 availability wrapper
+
+private struct PresentationCornerRadiusModifier: ViewModifier {
+    let radius: CGFloat
+
+    func body(content: Content) -> some View {
+        if #available(iOS 16.4, *) {
+            content.presentationCornerRadius(radius)
+        } else {
+            content
+        }
+    }
+}
+
