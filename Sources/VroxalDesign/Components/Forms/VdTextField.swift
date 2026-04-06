@@ -135,7 +135,7 @@ public struct VdTextField: View {
                 }
             }                    
 
-            .frame(minHeight: 22)
+            .frame(minHeight: 24)
             .vdFont(.bodyMedium)
             .padding(.vertical, VdSpacing.smMd)
             .foregroundStyle(

@@ -28,17 +28,19 @@
 //   [Helper text]
 //
 // PROPS
-//   label          — field label above the input
-//   selection      — Binding<Date?> (nil = no value selected yet)
-//   placeholder    — text shown when selection is nil
-//   state          — VdInputState: default · disabled · error · success · warning
-//   isOptional     — Bool: shows "Optional" tag right of label
-//   leadingIcon    — icon token for leading slot (sf:/vd:)
-//   helperText     — optional helper/instruction text below field
-//   mode           — VdDateTimeFieldMode: .date · .time · .dateTime
-//   minimumDate    — optional lower bound for the picker
-//   maximumDate    — optional upper bound for the picker
-//   onChange       — closure fired when a date is confirmed via Done
+//   label           — field label above the input
+//   selection       — Binding<Date?> (nil = no value selected yet)
+//   placeholder     — text shown when selection is nil
+//   state           — VdInputState: default · disabled · error · success · warning
+//   isOptional      — Bool: shows "Optional" tag right of label
+//   leadingIcon     — icon token for leading slot (sf:/vd:)
+//   helperText      — optional helper/instruction text below field
+//   trailingIcon    — optional icon token for trailing action button (e.g. "xmark.circle.fill")
+//   onTrailingAction— closure fired when trailing icon button is tapped
+//   mode            — VdDateTimeFieldMode: .date · .time · .dateTime
+//   minimumDate     — optional lower bound for the picker
+//   maximumDate     — optional upper bound for the picker
+//   onChange        — closure fired when a date is confirmed via Done
 // ─────────────────────────────────────────────────────────────
 
 import SwiftUI
@@ -67,16 +69,18 @@ public enum VdDateTimeFieldMode {
 
 public struct VdDateTimeField: View {
 
-    private let label:       String
-    private let placeholder: String
-    private let state:       VdInputState
-    private let isOptional:  Bool
-    private let leadingIcon: String?
-    private let helperText:  String?
-    private let mode:        VdDateTimeFieldMode
-    private let minimumDate: Date?
-    private let maximumDate: Date?
-    private let onChange:    ((Date?) -> Void)?
+    private let label:            String
+    private let placeholder:      String
+    private let state:            VdInputState
+    private let isOptional:       Bool
+    private let leadingIcon:      String?
+    private let helperText:       String?
+    private let trailingIcon:     String?
+    private let onTrailingAction: (() -> Void)?
+    private let mode:             VdDateTimeFieldMode
+    private let minimumDate:      Date?
+    private let maximumDate:      Date?
+    private let onChange:         ((Date?) -> Void)?
 
     @Binding private var selection: Date?
 
@@ -85,29 +89,33 @@ public struct VdDateTimeField: View {
     @State private var tempDate: Date = Date()
 
     public init(
-        _ label:     String,
-        selection:   Binding<Date?>,
-        placeholder: String              = "Placeholder",
-        state:       VdInputState        = .default,
-        isOptional:  Bool                = false,
-        leadingIcon: String?             = nil,
-        helperText:  String?             = nil,
-        mode:        VdDateTimeFieldMode = .dateTime,
-        minimumDate: Date?               = nil,
-        maximumDate: Date?               = nil,
-        onChange:    ((Date?) -> Void)?  = nil
+        _ label:          String,
+        selection:        Binding<Date?>,
+        placeholder:      String              = "Placeholder",
+        state:            VdInputState        = .default,
+        isOptional:       Bool                = false,
+        leadingIcon:      String?             = nil,
+        helperText:       String?             = nil,
+        trailingIcon:     String?             = nil,
+        onTrailingAction: (() -> Void)?       = nil,
+        mode:             VdDateTimeFieldMode = .dateTime,
+        minimumDate:      Date?               = nil,
+        maximumDate:      Date?               = nil,
+        onChange:         ((Date?) -> Void)?  = nil
     ) {
-        self.label       = label
-        self._selection  = selection
-        self.placeholder = placeholder
-        self.state       = state
-        self.isOptional  = isOptional
-        self.leadingIcon = leadingIcon
-        self.helperText  = helperText
-        self.mode        = mode
-        self.minimumDate = minimumDate
-        self.maximumDate = maximumDate
-        self.onChange    = onChange
+        self.label            = label
+        self._selection       = selection
+        self.placeholder      = placeholder
+        self.state            = state
+        self.isOptional       = isOptional
+        self.leadingIcon      = leadingIcon
+        self.helperText       = helperText
+        self.trailingIcon     = trailingIcon
+        self.onTrailingAction = onTrailingAction
+        self.mode             = mode
+        self.minimumDate      = minimumDate
+        self.maximumDate      = maximumDate
+        self.onChange         = onChange
     }
 
     // ─────────────────────────────────────────────────────────
@@ -118,7 +126,7 @@ public struct VdDateTimeField: View {
         VStack(alignment: .leading, spacing: VdSpacing.xs) {
             labelRow
             inputContainer
-            if let helper = helperText { helperRow(text: helper) }
+            if helperText != nil { helperRow }
         }
         .disabled(state == .disabled)
         .sheet(isPresented: $isPickerPresented) {
@@ -185,12 +193,24 @@ public struct VdDateTimeField: View {
             }
             .vdFont(.bodyMedium)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .frame(minHeight: 22)
+            .frame(minHeight: 27)
             .padding(.vertical, VdSpacing.smMd)
 
             // Status icon (error / success / warning)
             if let statusIcon = statusIconName {
                 VdIcon(statusIcon, size: VdIconSize.md, color: statusIconColor)
+            }
+
+            // Trailing action button — mirrors VdTextField's trailingIcon slot
+            if let icon = trailingIcon, let action = onTrailingAction {
+                VdIconButton(
+                    icon: icon,
+                    color: .neutral,
+                    style: .transparent,
+                    size: .small,
+                    isDisabled: state == .disabled,
+                    action: action
+                )
             }
         }
         .padding(.horizontal, VdSpacing.smMd)
@@ -201,10 +221,13 @@ public struct VdDateTimeField: View {
                 .strokeBorder(containerBorderColor, lineWidth: VdBorderWidth.sm)
         }
         .overlay {
-            if isPickerPresented {
-                RoundedRectangle(cornerRadius: VdRadius.md + 2, style: .continuous)
-                    .strokeBorder(Color.vdBorderPrimaryTertiary, lineWidth: VdBorderWidth.md)
-                    .padding(-2)
+            if isPickerPresented && state != .disabled {
+                RoundedRectangle(
+                    cornerRadius: VdRadius.md + 2,
+                    style: .continuous
+                )
+                .strokeBorder(Color.vdBorderPrimaryTertiary, lineWidth: VdBorderWidth.md)
+                .padding(-2)
             }
         }
         // Full-surface tap target — same behaviour as tapping a text field
@@ -219,11 +242,14 @@ public struct VdDateTimeField: View {
     // MARK: Helper row
     // ─────────────────────────────────────────────────────────
 
-    private func helperRow(text: String) -> some View {
-        Text(text)
-            .vdFont(.bodySmall)
-            .foregroundStyle(helperTextColor)
-            .frame(maxWidth: .infinity, alignment: .leading)
+    @ViewBuilder
+    private var helperRow: some View {
+        if let helper = helperText {
+            Text(helper)
+                .vdFont(.bodySmall)
+                .foregroundStyle(helperTextColor)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
     }
 
     // ─────────────────────────────────────────────────────────
@@ -344,7 +370,7 @@ private struct DateTimePickerSheet: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
+            VStack(alignment:.leading, spacing: 0) {
                 // ── Native picker ─────────────────────────────────
                 if mode == .time {
                     DatePicker(
@@ -356,7 +382,7 @@ private struct DateTimePickerSheet: View {
                     .datePickerStyle(.wheel)
                     .labelsHidden()
                     .tint(Color.vdContentPrimaryBase)
-                    .padding(VdSpacing.md)
+                    .padding(.horizontal, VdSpacing.lg)
                 } else {
                     DatePicker(
                         "",
@@ -364,22 +390,21 @@ private struct DateTimePickerSheet: View {
                         in: pickerRange,
                         displayedComponents: mode.displayedComponents
                     )
+
                     .datePickerStyle(.graphical)
                     .labelsHidden()
                     .tint(Color.vdContentPrimaryBase)
-                    .padding(VdSpacing.md)
+                    .padding(.horizontal, VdSpacing.lg)
                 }
-
                 Spacer(minLength: 0)
 
                 // ── Full-width Done button ────────────────────────
-                VdButton("Done", size: .medium, fullWidth: true) {
+                VdButton("Done", size: .medium, rounded: true, fullWidth: true) {
                     onConfirm(tempDate)
                     dismiss()
                 }
-                .padding(.horizontal, VdSpacing.lg)
-                .padding(.bottom, VdSpacing.lg)
-                .padding(.top, VdSpacing.sm)
+                .padding(.horizontal, VdSpacing.s600)
+                .padding(.top, VdSpacing.s600)
             }
             .navigationTitle(sheetTitle)
             .navigationBarTitleDisplayMode(.inline)

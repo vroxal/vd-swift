@@ -166,6 +166,7 @@ public struct VdSelectField<T: Hashable>: View {
                         .foregroundStyle(placeholderColor)
                 }
             }
+            .frame(minHeight: 24)
             .frame(maxWidth: .infinity, alignment: .leading)
             .lineLimit(1)
             .truncationMode(.tail)
