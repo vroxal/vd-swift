@@ -34,42 +34,42 @@ extension VdAlertColor {
                 background: .vdBackgroundPrimarySecondary,
                 border: .vdBorderPrimarySecondary,
                 contentColor: .vdContentPrimaryOnSecondary,
-                icon: "vd:info-circle-filled",
+                icon: "vd:info-circle-filled"
             )
         case .neutral:
             return VdAlertTokens(
                 background: .vdBackgroundNeutralSecondary,
                 border: .vdBorderNeutralSecondary,
                 contentColor: .vdContentNeutralOnSecondary,
-                icon: "vd:info-circle-filled",
+                icon: "vd:info-circle-filled"
             )
         case .success:
             return VdAlertTokens(
                 background: .vdBackgroundSuccessSecondary,
                 border: .vdBorderSuccessSecondary,
                 contentColor: .vdContentSuccessOnSecondary,
-                icon: "vd:check-circle-filled",
+                icon: "vd:check-circle-filled"
             )
         case .error:
             return VdAlertTokens(
                 background: .vdBackgroundErrorSecondary,
                 border: .vdBorderErrorSecondary,
                 contentColor: .vdContentErrorOnSecondary,
-                icon: "vd:danger-circle-filled",
+                icon: "vd:danger-circle-filled"
             )
         case .warning:
             return VdAlertTokens(
                 background: .vdBackgroundWarningSecondary,
                 border: .vdBorderWarningSecondary,
                 contentColor: .vdContentWarningOnSecondary,
-                icon: "vd:danger-triangle-filled",
+                icon: "vd:danger-triangle-filled"
             )
         case .info:
             return VdAlertTokens(
                 background: .vdBackgroundInfoSecondary,
                 border: .vdBorderInfoSecondary,
                 contentColor: .vdContentInfoOnSecondary,
-                icon: "vd:info-circle-filled",
+                icon: "vd:info-circle-filled"
             )
         }
     }

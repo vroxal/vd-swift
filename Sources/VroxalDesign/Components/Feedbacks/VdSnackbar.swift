@@ -41,6 +41,8 @@ public struct VdSnackbar: View {
 
             if let icon = leadingIcon {
                 VdIcon(icon, size: VdIconSize.md, color: .vdContentNeutralOnBase)
+                    .padding(VdSpacing.sm)
+
             }
 
             // ── Message ───────────────────────────────────────
@@ -48,6 +50,9 @@ public struct VdSnackbar: View {
                 .vdFont(.bodyMedium)
                 .foregroundStyle(Color.vdContentNeutralOnBase)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(minHeight: 24)
+                .padding(VdSpacing.sm)
+
 
             if let label = action {
                 Button(action: { onAction?() }) {
@@ -56,6 +61,8 @@ public struct VdSnackbar: View {
                         .foregroundStyle(Color.vdContentPrimaryBaseInverted)
                 }
                 .buttonStyle(.plain)
+                .padding(0)
+                .padding(VdSpacing.sm)
             }
 
             if closable {
@@ -63,10 +70,11 @@ public struct VdSnackbar: View {
                     VdIcon("vd:xmark", size: VdIconSize.xs, color: .vdContentNeutralOnBase)
                 }
                 .buttonStyle(.plain)
+                .padding(0)
+                .padding(VdSpacing.sm)
             }
         }
-        .padding(.horizontal, VdSpacing.smMd)
-        .padding(.vertical, VdSpacing.sm)
+        .padding(VdSpacing.sm)
         .background(Color.vdBackgroundNeutralTertiary)
         .clipShape(RoundedRectangle(cornerRadius: VdRadius.md, style: .continuous))
         .contentShape(RoundedRectangle(cornerRadius: VdRadius.md, style: .continuous))
