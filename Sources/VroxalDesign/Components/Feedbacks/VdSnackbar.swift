@@ -133,10 +133,6 @@ public struct VdSnackbarModifier: ViewModifier {
                 dismissId &+= 1
                 VdSnackbarPresenter.dismiss(id: presentationID)
             }
-            .animation(
-                .spring(response: 0.35, dampingFraction: 0.8),
-                value: isPresented
-            )
     }
 
     private var presentationSignature: VdSnackbarPresentationSignature {
@@ -219,50 +215,45 @@ private enum VdSnackbarPresenter {
     private static let teardownDelay: TimeInterval = 0.4
     private static var entries: [UUID: VdSnackbarPresentationEntry] = [:]
 
-    static func present(
-        id: UUID,
-        configuration: VdSnackbarPresentationConfiguration
-    ) {
-        guard let scene = activeWindowScene() else { return }
-        let bottomInset = resolvedBottomInset(for: scene)
+   static func present(
+    id: UUID,
+    configuration: VdSnackbarPresentationConfiguration
+) {
+    guard let scene = activeWindowScene() else { return }
+    let bottomInset = resolvedBottomInset(for: scene)
 
-        if let entry = entries[id] {
-            entry.window.windowScene = scene
-            entry.window.isHidden = false
-            entry.model.configuration = configuration
-            entry.model.bottomInset = bottomInset
-            (entry.window as? VdPassThroughWindow)?.isShowingSnackbar = true
-            withAnimation(transition) {
-                entry.model.isVisible = true
-            }
-            return
-        }
-
-        let model = VdSnackbarOverlayModel(configuration: configuration)
-        model.bottomInset = bottomInset
-        let window = makeWindow(for: scene)
-        model.onSnackbarFrameChange = { [weak window] frame in
-            (window as? VdPassThroughWindow)?.blockedFrame = frame
-        }
-        let hostingController = UIHostingController(
-            rootView: VdSnackbarOverlayView(model: model)
-        )
-        hostingController.view.backgroundColor = .clear
-
-        window.windowScene = scene
-        window.rootViewController = hostingController
-        window.isHidden = false
-        (window as? VdPassThroughWindow)?.isShowingSnackbar = true
-
-        entries[id] = VdSnackbarPresentationEntry(window: window, model: model)
-
-        DispatchQueue.main.async {
-            guard let entry = entries[id] else { return }
-            withAnimation(transition) {
-                entry.model.isVisible = true
-            }
-        }
+    if let entry = entries[id] {
+        entry.window.windowScene = scene
+        entry.window.isHidden = false
+        entry.model.configuration = configuration
+        entry.model.bottomInset = bottomInset
+        (entry.window as? VdPassThroughWindow)?.isShowingSnackbar = true
+        entry.model.isVisible = true  // view's onChange handles the animation
+        return
     }
+
+    let model = VdSnackbarOverlayModel(configuration: configuration)
+    model.bottomInset = bottomInset
+    let window = makeWindow(for: scene)
+    model.onSnackbarFrameChange = { [weak window] frame in
+        (window as? VdPassThroughWindow)?.blockedFrame = frame
+    }
+    let hostingController = UIHostingController(
+        rootView: VdSnackbarOverlayView(model: model)
+    )
+    hostingController.view.backgroundColor = .clear
+
+    window.windowScene = scene
+    window.rootViewController = hostingController
+    window.isHidden = false
+    (window as? VdPassThroughWindow)?.isShowingSnackbar = true
+
+    entries[id] = VdSnackbarPresentationEntry(window: window, model: model)
+
+    // ✅ Removed: DispatchQueue.main.async { withAnimation { model.isVisible = true } }
+    // VdSnackbarOverlayView.onAppear triggers the enter animation reliably.
+}
+
 
     static func dismiss(id: UUID) {
         guard let entry = entries[id] else { return }
@@ -270,10 +261,6 @@ private enum VdSnackbarPresenter {
         // Clear immediately so hitTest stops intercepting touches
         // the moment dismissal begins, not after the exit animation.
         (entry.window as? VdPassThroughWindow)?.isShowingSnackbar = false
-
-        withAnimation(transition) {
-            entry.model.isVisible = false
-        }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + teardownDelay) {
             guard let currentEntry = entries[id],
@@ -360,12 +347,13 @@ private struct VdSnackbarPresentationEntry {
 
 private struct VdSnackbarOverlayView: View {
     @ObservedObject var model: VdSnackbarOverlayModel
+    @State private var isShowing = false  // local state drives animations
 
     var body: some View {
         ZStack(alignment: .bottom) {
             Color.clear
 
-            if model.isVisible {
+            if isShowing {
                 VdSnackbar(
                     message: model.configuration.message,
                     action: model.configuration.action,
@@ -376,9 +364,6 @@ private struct VdSnackbarOverlayView: View {
                 )
                 .padding(.horizontal, VdSpacing.lg)
                 .padding(.bottom, model.bottomInset)
-                // ✅ onTapGesture before contentShape so the full
-                //    padded bounding box consumes taps, not just
-                //    the VdSnackbar pill itself.
                 .onTapGesture { }
                 .contentShape(Rectangle())
                 .background(
@@ -400,12 +385,24 @@ private struct VdSnackbarOverlayView: View {
         .onPreferenceChange(VdSnackbarFramePreferenceKey.self) { frame in
             model.onSnackbarFrameChange?(frame)
         }
-        .onChangeCompat(of: model.isVisible) { isVisible in
-            guard !isVisible else { return }
+        // Clear blocked frame when snackbar finishes animating out
+        .onChangeCompat(of: isShowing) { showing in
+            guard !showing else { return }
             model.onSnackbarFrameChange?(.null)
+        }
+        // Animation is scoped only to the overlay content, not the calling view
+        .animation(.spring(response: 0.35, dampingFraction: 0.8), value: isShowing)
+        // ✅ Fires after first render is committed — enter animation is guaranteed
+        .onAppear {
+            isShowing = true
+        }
+        // Syncs dismiss (and re-show for existing entries) from the model
+        .onChangeCompat(of: model.isVisible) { newValue in
+            isShowing = newValue
         }
     }
 }
+
 
 private struct VdSnackbarFramePreferenceKey: PreferenceKey {
     static var defaultValue: CGRect = .null

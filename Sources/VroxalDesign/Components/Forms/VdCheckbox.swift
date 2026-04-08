@@ -1,5 +1,4 @@
 // Components/Forms/VdCheckbox.swift — Vroxal Design
-// ─────────────────────────────────────────────────────────────
 
 import SwiftUI
 
@@ -47,11 +46,7 @@ public struct VdCheckbox: View {
         .buttonStyle(.plain)
         .focused($isFocused)
         .disabled(isDisabled)
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in if !isPressed { isPressed = true } }
-                .onEnded { _ in isPressed = false }
-        )
+
     }
 
     // ─────────────────────────────────────────────────────────
@@ -158,106 +153,5 @@ public struct VdCheckbox: View {
     private func toggle() {
         guard !isDisabled && !isIndeterminate else { return }
         isChecked.toggle()
-    }
-}
-
-// ─────────────────────────────────────────────────────────────
-// MARK: — Preview
-// ─────────────────────────────────────────────────────────────
-
-#Preview("VdCheckbox — All Variants") {
-    ScrollView {
-        VStack(alignment: .leading, spacing: VdSpacing.xl) {
-
-            previewSection("Default") {
-                VdCheckbox(isChecked: .constant(false),
-                    label: "Checkbox Label",
-                    description: "Description for the checkbox goes here")
-                VdCheckbox(isChecked: .constant(true),
-                    label: "Checkbox Label",
-                    description: "Description for the checkbox goes here")
-                VdCheckbox(isChecked: .constant(false),
-                    isIndeterminate: true,
-                    label: "Checkbox Label",
-                    description: "Description for the checkbox goes here")
-            }
-
-            previewSection("Disabled") {
-                VdCheckbox(isChecked: .constant(false),
-                    label: "Checkbox Label",
-                    description: "Description for the checkbox goes here",
-                    isDisabled: true)
-                VdCheckbox(isChecked: .constant(true),
-                    label: "Checkbox Label",
-                    description: "Description for the checkbox goes here",
-                    isDisabled: true)
-                VdCheckbox(isChecked: .constant(false),
-                    isIndeterminate: true,
-                    label: "Checkbox Label",
-                    description: "Description for the checkbox goes here",
-                    isDisabled: true)
-            }
-
-            previewSection("No description") {
-                VdCheckbox(isChecked: .constant(false), label: "Unchecked")
-                VdCheckbox(isChecked: .constant(true),  label: "Checked")
-                VdCheckbox(isChecked: .constant(false), isIndeterminate: true, label: "Indeterminate")
-            }
-
-            previewSection("No label or description") {
-                HStack(spacing: VdSpacing.md) {
-                    VdCheckbox(isChecked: .constant(false))
-                    VdCheckbox(isChecked: .constant(true))
-                    VdCheckbox(isChecked: .constant(false), isIndeterminate: true)
-                }
-            }
-
-            previewSection("Interactive") {
-                InteractiveCheckboxDemo()
-            }
-        }
-        .padding(VdSpacing.lg)
-    }
-    .background(Color.vdBackgroundDefaultBase)
-}
-
-private func previewSection<Content: View>(
-    _ title: String,
-    @ViewBuilder content: () -> Content
-) -> some View {
-    VStack(alignment: .leading, spacing: VdSpacing.sm) {
-        Text(title)
-            .vdFont(.labelSmall)
-            .foregroundStyle(Color.vdContentDefaultTertiary)
-        content()
-    }
-}
-
-private struct InteractiveCheckboxDemo: View {
-    @State private var option1 = false
-    @State private var option2 = true
-    @State private var option3 = false
-
-    private var allChecked:    Bool { option1 && option2 && option3 }
-    private var someChecked:   Bool { option1 || option2 || option3 }
-    private var isIndeterminate: Bool { someChecked && !allChecked }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: VdSpacing.sm) {
-            VdCheckbox(
-                isChecked: Binding(get: { allChecked }, set: { val in
-                    option1 = val; option2 = val; option3 = val
-                }),
-                isIndeterminate: isIndeterminate,
-                label: "Select all"
-            )
-            Divider().padding(.vertical, VdSpacing.xs)
-            VdCheckbox(isChecked: $option1, label: "Option one",   description: "First option")
-            VdCheckbox(isChecked: $option2, label: "Option two",   description: "Second option")
-            VdCheckbox(isChecked: $option3, label: "Option three", description: "Third option")
-        }
-        .padding(VdSpacing.md)
-        .background(Color.vdBackgroundDefaultSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: VdRadius.lg))
     }
 }

@@ -1,19 +1,4 @@
 // Components/Feedback/VdEmptyState.swift — Vroxal Design
-// ─────────────────────────────────────────────────────────────
-// Figma source: node 541-11772
-//
-// Variants:
-// - boxed: true/false
-// - actions: primary + secondary (optional)
-//
-// Layout tokens from design:
-// - Container gap: 24pt
-// - Boxed padding: 40pt
-// - Icon container padding: 16pt
-// - Text gap: 4pt
-// - Action gap: 16pt
-// - Max width: 640pt
-// ─────────────────────────────────────────────────────────────
 
 import SwiftUI
 
@@ -127,42 +112,5 @@ public struct VdEmptyState: View {
             (primaryAction && primaryActionTitle != nil)
             || (secondaryAction && secondaryActionTitle != nil)
         )
-    }
-}
-
-#Preview("VdEmptyState — All Variants") {
-    ScrollView {
-        VStack(alignment: .leading, spacing: VdSpacing.xl) {
-            previewSection("Boxed · With Actions") {
-                VdEmptyState()
-                    .frame(maxWidth: .infinity)
-            }
-
-            previewSection("Plain · With Actions") {
-                VdEmptyState(boxed: false)
-                    .frame(maxWidth: .infinity)
-            }
-
-            previewSection("Boxed · No Actions") {
-                VdEmptyState(
-                    actions: false
-                )
-                .frame(maxWidth: .infinity)
-            }
-        }
-        .padding(VdSpacing.lg)
-    }
-    .background(Color.vdBackgroundDefaultSecondary)
-}
-
-private func previewSection<Content: View>(
-    _ title: String,
-    @ViewBuilder content: () -> Content
-) -> some View {
-    VStack(alignment: .leading, spacing: VdSpacing.sm) {
-        Text(title)
-            .vdFont(.labelSmall)
-            .foregroundStyle(Color.vdContentDefaultTertiary)
-        content()
     }
 }

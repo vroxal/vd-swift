@@ -1,47 +1,4 @@
 // Components/Forms/VdDateTimeField.swift — Vroxal Design
-// ─────────────────────────────────────────────────────────────
-// A styled date/time input that looks exactly like VdTextField.
-// Tapping the container opens a bottom sheet with a native
-// DatePicker; confirming with "Done" commits the value.
-//
-// STATES → TOKEN MAPPING
-//   Default   bg=BackgroundDefaultSecondary  border=BorderDefaultSecondary  1pt
-//   Focus*    bg=BackgroundDefaultSecondary  border=BorderDefaultBase       1pt
-//             + focus ring BorderPrimaryTertiary 2pt outset 2pt
-//   Disabled  bg=BackgroundDefaultDisabled   border=BorderDefaultDisabled   1pt
-//             label=ContentDefaultDisabled   helper=ContentDefaultDisabled
-//   Error     bg=BackgroundErrorSecondary    border=BorderErrorBase         1pt
-//             label=ContentErrorBase         helper=ContentErrorBase
-//             + exclamationmark.circle.fill trailing
-//   Success   bg=BackgroundDefaultSecondary  border=BorderDefaultSecondary  1pt
-//             helper=ContentSuccessBase
-//             + checkmark.circle.fill trailing
-//   Warning   bg=BackgroundDefaultSecondary  border=BorderDefaultSecondary  1pt
-//             helper=ContentWarningBase
-//             + exclamationmark.triangle.fill trailing
-//
-//   *Focus = sheet is open
-//
-// LAYOUT
-//   [Label ──────────────────── Optional]
-//   [LeadingIcon  <formatted value / placeholder>  StatusIcon]  ← same as VdTextField
-//   [Helper text]
-//
-// PROPS
-//   label           — field label above the input
-//   selection       — Binding<Date?> (nil = no value selected yet)
-//   placeholder     — text shown when selection is nil
-//   state           — VdInputState: default · disabled · error · success · warning
-//   isOptional      — Bool: shows "Optional" tag right of label
-//   leadingIcon     — icon token for leading slot (sf:/vd:)
-//   helperText      — optional helper/instruction text below field
-//   trailingIcon    — optional icon token for trailing action button (e.g. "xmark.circle.fill")
-//   onTrailingAction— closure fired when trailing icon button is tapped
-//   mode            — VdDateTimeFieldMode: .date · .time · .dateTime
-//   minimumDate     — optional lower bound for the picker
-//   maximumDate     — optional upper bound for the picker
-//   onChange        — closure fired when a date is confirmed via Done
-// ─────────────────────────────────────────────────────────────
 
 import SwiftUI
 

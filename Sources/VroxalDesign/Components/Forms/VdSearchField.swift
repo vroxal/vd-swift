@@ -1,3 +1,5 @@
+// Components/Forms/VdSearchField.swift — Vroxal Design
+
 import Dispatch
 import SwiftUI
 
@@ -156,78 +158,5 @@ public struct VdSearchField: View {
 
     private var leadingIconColor: Color {
         isDisabled ? .vdContentDefaultDisabled : .vdContentNeutralBase
-    }
-}
-
-#Preview("VdSearchField — All States") {
-    ScrollView {
-        VStack(alignment: .leading, spacing: VdSpacing.xl) {
-            previewSection("Default") {
-                VdSearchField(
-                    text: .constant(""),
-                    placeholder: "Placeholder"
-                )
-                VdSearchField(
-                    text: .constant("Input Value"),
-                    placeholder: "Placeholder"
-                )
-            }
-
-            previewSection("Focus") {
-                VdSearchField(
-                    text: .constant(""),
-                    placeholder: "Placeholder",
-                    previewForceFocused: true
-                )
-                VdSearchField(
-                    text: .constant("Input Value"),
-                    placeholder: "Placeholder",
-                    previewForceFocused: true
-                )
-            }
-
-            previewSection("Disabled") {
-                VdSearchField(
-                    text: .constant(""),
-                    placeholder: "Placeholder",
-                    isDisabled: true
-                )
-                VdSearchField(
-                    text: .constant("Input Value"),
-                    placeholder: "Placeholder",
-                    isDisabled: true
-                )
-            }
-
-            previewSection("Interactive") {
-                InteractiveSearchFieldDemo()
-            }
-        }
-        .padding(VdSpacing.lg)
-    }
-    .background(Color.vdBackgroundDefaultBase)
-}
-
-@ViewBuilder
-private func previewSection<Content: View>(
-    _ title: String,
-    @ViewBuilder content: () -> Content
-) -> some View {
-    VStack(alignment: .leading, spacing: VdSpacing.sm) {
-        Text(title)
-            .vdFont(.labelSmall)
-            .foregroundStyle(Color.vdContentDefaultTertiary)
-        content()
-    }
-}
-
-private struct InteractiveSearchFieldDemo: View {
-    @State private var query = ""
-
-    var body: some View {
-        VdSearchField(
-            text: $query,
-            placeholder: "Search"
-        )
     }
 }

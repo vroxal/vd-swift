@@ -1,33 +1,4 @@
 // Components/Forms/VdRadioButton.swift — Vroxal Design
-// ─────────────────────────────────────────────────────────────
-// Figma source: node 279-6336
-//
-// USAGE — individual
-//   VdRadioButton(isSelected: $selected, label: "Option A")
-//
-// USAGE — group (bind all to the same @State value)
-//   @State private var pick = "a"
-//   VdRadioButton(isSelected: Binding(get: { pick=="a" }, set: { if $0 { pick="a" } }),
-//       label: "Option A")
-//   VdRadioButton(isSelected: Binding(get: { pick=="b" }, set: { if $0 { pick="b" } }),
-//       label: "Option B")
-//
-// STATES → TOKEN MAPPING
-//   Unselected/Default  ring=BorderDefaultSecondary  bg=BackgroundDefaultSecondary
-//   Unselected/Pressed  ring=BorderPrimaryBase       bg=BackgroundPrimarySecondary
-//   Unselected/Focus    ring=BorderDefaultSecondary  bg=BackgroundDefaultSecondary  +focus ring
-//   Unselected/Disabled ring=BorderDefaultTertiary   bg=BackgroundDefaultDisabled   opacity 0.4
-//   Selected/Default    ring=BorderPrimaryBase       bg=BackgroundDefaultSecondary  dot=BackgroundPrimaryBase
-//   Selected/Pressed    ring=BorderPrimarySecondary  bg=BackgroundDefaultSecondary  dot=BackgroundPrimaryBaseHover
-//   Selected/Focus      ring=BorderPrimaryBase       bg=BackgroundDefaultSecondary  dot=BackgroundPrimaryBase  +focus ring
-//   Selected/Disabled   ring=BorderPrimaryBase       bg=BackgroundDefaultSecondary  dot=BackgroundPrimaryBase  opacity 0.4
-//   Focus ring          BorderPrimaryTertiary · 2pt · full radius
-//
-// LABEL COLOURS (same as VdCheckbox)
-//   Default   → ContentDefaultSecondary
-//   Pressed / Focus → ContentDefaultBase
-//   Disabled  → ContentDefaultDisabled
-// ─────────────────────────────────────────────────────────────
 
 import SwiftUI
 
@@ -69,11 +40,6 @@ public struct VdRadioButton: View {
         .buttonStyle(.plain)
         .focused($isFocused)
         .disabled(isDisabled)
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in if !isPressed { isPressed = true } }
-                .onEnded { _ in isPressed = false }
-        )
     }
 
     // ─────────────────────────────────────────────────────────
@@ -264,77 +230,5 @@ public struct VdRadioOption<Value: Hashable>: View {
             description: description,
             isDisabled:  isDisabled
         )
-    }
-}
-
-// ─────────────────────────────────────────────────────────────
-// MARK: — Preview
-// ─────────────────────────────────────────────────────────────
-
-#Preview("VdRadioButton — All Variants") {
-    ScrollView {
-        VStack(alignment: .leading, spacing: VdSpacing.xl) {
-
-            previewSection("Default") {
-                VdRadioButton(isSelected: .constant(false),
-                    label: "Radio Button Label",
-                    description: "Description for the radio button")
-                VdRadioButton(isSelected: .constant(true),
-                    label: "Radio Button Label",
-                    description: "Description for the radio button")
-            }
-
-            previewSection("Disabled") {
-                VdRadioButton(isSelected: .constant(false),
-                    label: "Radio Button Label",
-                    description: "Description for the radio button",
-                    isDisabled: true)
-                VdRadioButton(isSelected: .constant(true),
-                    label: "Radio Button Label",
-                    description: "Description for the radio button",
-                    isDisabled: true)
-            }
-
-            previewSection("No label") {
-                HStack(spacing: VdSpacing.md) {
-                    VdRadioButton(isSelected: .constant(false))
-                    VdRadioButton(isSelected: .constant(true))
-                }
-            }
-
-            previewSection("Radio Group") {
-                InteractiveRadioGroupDemo()
-            }
-        }
-        .padding(VdSpacing.lg)
-    }
-    .background(Color.vdBackgroundDefaultBase)
-}
-
-private func previewSection<Content: View>(
-    _ title: String,
-    @ViewBuilder content: () -> Content
-) -> some View {
-    VStack(alignment: .leading, spacing: VdSpacing.sm) {
-        Text(title)
-            .vdFont(.labelSmall)
-            .foregroundStyle(Color.vdContentDefaultTertiary)
-        content()
-    }
-}
-
-private struct InteractiveRadioGroupDemo: View {
-    @State private var plan = "pro"
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: VdSpacing.sm) {
-            VdRadioGroup(selection: $plan) {
-                VdRadioOption(value: "free",       label: "Free",       description: "Up to 3 projects")
-                VdRadioOption(value: "pro",        label: "Pro",        description: "$12/month · Unlimited projects")
-                VdRadioOption(value: "enterprise", label: "Enterprise", description: "Custom pricing")
-                VdRadioOption(value: "legacy",     label: "Legacy",     description: "No longer available", isDisabled: true)
-            }
-        }
-        .padding(VdSpacing.md)
     }
 }
