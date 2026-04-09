@@ -339,7 +339,7 @@ private struct DateTimePickerSheet: View {
                     .datePickerStyle(.wheel)
                     .labelsHidden()
                     .tint(Color.vdContentPrimaryBase)
-                    .padding(.horizontal, VdSpacing.lg)
+//                    .padding(.horizontal, VdSpacing.lg)
                 } else {
                     DatePicker(
                         "",
@@ -351,7 +351,7 @@ private struct DateTimePickerSheet: View {
                     .datePickerStyle(.graphical)
                     .labelsHidden()
                     .tint(Color.vdContentPrimaryBase)
-                    .padding(.horizontal, VdSpacing.lg)
+//                    .padding(.horizontal, VdSpacing.lg)
                 }
                 Spacer(minLength: 0)
 
@@ -397,6 +397,8 @@ private struct DateTimePickerSheet: View {
                 }
             }
         }
+        .background(Color.vdBackgroundDefaultSecondary)
+
         .onAppear {
             initialDate = tempDate
         }
